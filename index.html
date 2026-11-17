@@ -205,7 +205,28 @@ body[data-layout="desktop"] .compact-header{min-width:0}
 .entry-details>summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:5px}
 .researcher-card .entry-body .meta{margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){.entry-chevron{transition:none}}
-.researcher-relations{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.researcher-relations h4{margin:0 0 10px}.glossary-head{padding:14px 18px}.glossary-head h2{margin:0}.element-uses{margin:18px 0;padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--panel)}.uses-heading h2{margin:5px 0 16px;font-size:1.35rem}.uses-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.uses-card{border:1px solid var(--line);background:var(--bg);border-radius:15px;padding:16px}.uses-icon{font-size:1.7rem}.uses-card h3{margin:9px 0;font-size:1.05rem}.uses-card p{line-height:1.7;margin:0}.uses-notice{font-size:.8rem;color:var(--sub);margin:12px 0 0}@media(max-width:600px){.uses-grid{grid-template-columns:1fr}.element-uses{padding:14px}}</style>
+.researcher-relations{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.researcher-relations h4{margin:0 0 10px}.glossary-head{padding:14px 18px}.glossary-head h2{margin:0}.element-uses{margin:18px 0;padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--panel)}.uses-heading h2{margin:5px 0 16px;font-size:1.35rem}.uses-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.uses-card{border:1px solid var(--line);background:var(--bg);border-radius:15px;padding:16px}.uses-icon{font-size:1.7rem}.uses-card h3{margin:9px 0;font-size:1.05rem}.uses-card p{line-height:1.7;margin:0}.uses-notice{font-size:.8rem;color:var(--sub);margin:12px 0 0}@media(max-width:600px){.uses-grid{grid-template-columns:1fr}.element-uses{padding:14px}}
+.timeline-intro{padding:16px 18px;margin-bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.timeline-intro h2{margin:0 0 6px}.timeline-intro h2 small{font-size:.65em;color:var(--sub)}
+.timeline-intro p{margin:0;color:var(--sub);line-height:1.6}
+.timeline-toolbar{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:18px;margin-bottom:22px}
+.timeline-filters{margin-bottom:14px}.timeline-filters>strong{display:block;margin-bottom:8px}
+.timeline-chips{display:flex;gap:7px;flex-wrap:wrap}
+.timeline-chips button,.timeline-order button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer}
+.timeline-chips button[aria-pressed=true]{background:var(--accent);color:white;border-color:var(--accent)}
+.timeline-order{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--sub);font-size:.86rem}
+.science-timeline{position:relative;margin-left:13px;padding-left:26px;border-left:2px solid var(--line)}
+.timeline-event{position:relative;margin:0 0 14px}
+.timeline-marker{position:absolute;left:-35px;top:23px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--panel);box-sizing:border-box}
+.timeline-event-card{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px}
+.timeline-event-top{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+.timeline-event-top time{font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.timeline-kind{font-size:.75rem;color:var(--sub);border:1px solid var(--line);border-radius:100px;padding:3px 9px}
+.timeline-event .entry-details>summary strong{font-size:1rem}
+.timeline-links{border-top:1px solid var(--line);padding-top:10px}
+.timeline-links h4{margin:0 0 9px}
+@media(max-width:600px){.timeline-toolbar{padding:12px}.science-timeline{margin-left:8px;padding-left:18px}.timeline-marker{left:-27px}.timeline-event-card{padding:12px}}
+</style>
 </head>
 <body>
 <header class="compact-header">
@@ -329,7 +350,7 @@ const GL=[
 ["浸透圧","半透膜をへだてて濃度が違う溶液があるとき、溶媒が濃いほうへ移動しようとする圧力。"],
 ["配位結合","結合する電子対を片方の原子が一方的に出してできる共有結合。錯体にみられます。"]];
 let tab="pt",q="",filt=null,sel=8,cur=0;
-const TABS=[["pt","周期表"],["rx","化学反応"],["lab","擬似実験"],["hl","半減期"],["rs","研究者"],["gl","用語"],["quiz","学習クイズ"],["notes","📌 付箋"]];
+const TABS=[["timeline","科学年表"],["pt","周期表"],["rx","化学反応"],["lab","擬似実験"],["hl","半減期"],["rs","研究者"],["gl","用語"],["quiz","学習クイズ"],["notes","📌 付箋"]];
 let quizIndex=0,quizScore=0,quizAnswered=false,quizChoice=-1;
 let favorites=new Set(JSON.parse(localStorage.getItem("chemistry-favorites")||"[]"));
 const $=id=>document.getElementById(id);
@@ -606,6 +627,7 @@ function goRelated(kind,name){
 }
 
 function view(){
+ if(tab==="timeline")return scienceTimeline();
  if(tab=="notes")return stickyBoard();
  if(tab=="quiz")return quizIndex>=QUIZ.length?quizResult():quiz();
  if(tab=="lab")return lab();
@@ -614,10 +636,33 @@ function view(){
  if(tab=="rx")return focusedList(RX,"reaction",a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`);
  if(tab=="rs")return focusedList(researcherRows(),"person",a=>`<article class="item researcher-card"><details class="entry-details" ${focusItem?.kind==="person"&&focusItem.name===a[0]?"open":""}><summary><strong>${escapeHtml(a[0])}</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p class="meta">${escapeHtml(a[1])}・${escapeHtml(a[2])}</p><p>${escapeHtml(a[3])}</p><div class="researcher-relations"><h4>関連する内容</h4>${researcherRelations(a[0])}</div></div></details></article>`);
  return glossary()}
+
+const SCIENCE_EVENTS=[[-450,"古代ギリシャで四元素説が広まる","理論","エンペドクレスが土・水・空気・火を基本要素と考えた。現在の元素概念とは異なる。",[],[],[]],[-400,"原子論の提唱","理論","デモクリトスらが物質を分割不能な粒子からなると考えた。",["原子"],[],[]],[800,"錬金術と蒸留技術の発展","技術","イスラーム世界で蒸留や実験器具の改良が進み、後の化学技術に影響した。",[],[],[]],[1661,"『懐疑的化学者』出版","理論","ボイルが従来の元素観を批判し、実験に基づく化学を主張した。",[],["ボイル"],[]],[1662,"ボイルの法則","理論","一定温度で気体の圧力と体積が反比例する関係を示した。",["理想気体","状態方程式"],["ボイル"],[]],[1754,"二酸化炭素の研究","元素・物質","ブラックが固定空気（二酸化炭素）を研究した。",[],[],[]],[1766,"水素の研究","元素・物質","キャヴェンディッシュが可燃性の気体（水素）を詳しく調べた。",[],[],["H"]],[1772,"窒素の発見","元素・物質","ラザフォード（ダニエル）が空気中の窒素に相当する気体を研究した。",[],[],["N"]],[1774,"酸素の単離","元素・物質","プリーストリーらが酸素を単離した。シェーレも独立に発見していた。",[],[],["O"]],[1789,"近代的な元素表と質量保存","理論","ラヴォアジエが『化学原論』を出版し、元素の整理と質量保存の考えを示した。",["化学反応式"],["ラヴォアジエ"],["O"]],[1799,"定比例の法則","理論","プルーストが化合物の組成比は一定とする法則を確立した。",["化合物"],["プルースト"],[]],[1803,"ドルトンの原子説","理論","物質の反応を原子と整数比で説明する原子説を提案した。",["原子"],["ドルトン"],[]],[1807,"電気分解による金属の単離","元素・物質","デービーが電気分解によってカリウムとナトリウムを単離した。",["電気分解"],[],["K","Na"]],[1808,"気体反応の法則","理論","ゲイ＝リュサックが反応する気体の体積比の法則を示した。",["理想気体"],["ゲイ＝リュサック"],[]],[1811,"アボガドロの仮説","理論","同温同圧で等体積の気体は同数の分子を含むと提案した。",["モル"],["アボガドロ"],[]],[1813,"元素記号の体系化","元素・物質","ベルセリウスがアルファベットを用いた元素記号の表記を広めた。",["周期律"],["ベルセリウス"],[]],[1828,"尿素の人工合成","有機・生命","ヴェーラーが無機物から尿素を合成し、有機化学の発展に影響した。",["有機化合物"],[],[]],[1834,"電気分解の法則","電気化学","ファラデーが電気量と析出物の量の関係を明らかにした。",["電気分解"],["ファラデー"],[]],[1836,"ダニエル電池の発明","電気化学","安定した電圧を供給する電池が考案された。",["電池"],["ダニエル"],["Zn","Cu"]],[1840,"ヘスの法則","熱・反応","反応熱は経路によらず初期状態と最終状態で決まる。",["ヘスの法則","エンタルピー"],[],[]],[1859,"分光分析法の発展","元素・物質","ブンゼンとキルヒホッフが分光分析を確立し、新元素の発見に役立てた。",[],[],[]],[1860,"原子量の整理","理論","カニッツァーロの考えがカールスルーエ会議で広まり、原子量整理が進んだ。",["モル"],["カニッツァーロ"],[]],[1865,"ベンゼン環構造の提案","有機・生命","ケクレがベンゼンの環状構造を提案した。",["芳香族化合物"],[],["C"]],[1869,"周期表の発表","元素・物質","メンデレーエフが周期表を発表し、未発見元素の性質を予測した。",["周期律","族"],["メンデレーエフ"],[]],[1876,"化学平衡の法則の発展","熱・反応","ギブズが熱力学を化学平衡へ応用し、自由エネルギーの概念を発展させた。",["ギブズエネルギー"],[],[]],[1884,"電離説の提案","電気化学","アレニウスが電解質が溶液中でイオンになる考えを発展させた。",["電離"],["アレニウス"],[]],[1887,"アレニウスの反応速度研究","熱・反応","反応速度定数と温度の関係を定量的に扱う研究が進んだ。",["アレニウス式","活性化エネルギー"],["アレニウス"],[]],[1895,"X線の発見","原子・放射線","レントゲンがX線を発見し、物質内部の観察に新しい道を開いた。",[],[],[]],[1896,"放射能の発見","原子・放射線","ベクレルがウラン塩からの自然放射線を発見した。",["放射性崩壊"],["ベクレル"],["U"]],[1897,"電子の発見","原子・放射線","J・J・トムソンが陰極線の実験で電子を確認した。",["電子"],["トムソン"],[]],[1898,"ポロニウムとラジウムの発見","元素・物質","キュリー夫妻らが放射性元素を発見した。",["放射性同位体"],["マリー・キュリー"],["Po","Ra"]],[1900,"量子仮説","量子・構造","プランクが熱放射を説明するためエネルギー量子の考えを導入した。",[],[],[]],[1905,"光電効果の量子論","量子・構造","アインシュタインが光量子によって光電効果を説明した。",[],[],[]],[1909,"油滴実験","原子・放射線","ミリカンが電子の電荷を精密に測定した。",["電子"],["ミリカン"],[]],[1911,"原子核模型","原子・放射線","ラザフォードが散乱実験から小さな原子核を持つ原子模型を提案した。",["原子核"],["ラザフォード"],["Au"]],[1913,"ボーアの原子模型","量子・構造","電子の離散的なエネルギー準位によって水素のスペクトルを説明した。",["ボーア模型"],["ボーア"],["H"]],[1913,"原子番号の法則","元素・物質","モーズリーが特性X線の研究から原子番号の物理的意味を示した。",["原子番号"],["モーズリー"],[]],[1913,"アンモニア合成の工業化","産業・技術","ハーバー・ボッシュ法の工業生産が始まり、肥料生産に大きく影響した。",["触媒","化学平衡"],["フリッツ・ハーバー"],["N","H"]],[1916,"電子対による共有結合","量子・構造","ルイスが共有電子対による化学結合を提案した。",["共有結合","ルイス構造"],["ルイス"],[]],[1923,"酸・塩基の新しい定義","理論","ブレンステッドとローリーがプロトン授受による酸・塩基を提案した。",["酸と塩基"],["ブレンステッド"],["H"]],[1925,"パウリの排他原理","量子・構造","同じ原子内の電子の状態を制約する原理が提案された。",["パウリの排他原理"],["パウリ"],[]],[1926,"波動力学と電子軌道","量子・構造","シュレーディンガーの波動方程式が電子の確率的記述の基礎になった。",["電子軌道"],["シュレーディンガー"],[]],[1927,"不確定性原理","量子・構造","ハイゼンベルクが位置と運動量の測定限界を示した。",["量子数"],["ハイゼンベルク"],[]],[1932,"中性子の発見","原子・放射線","チャドウィックが中性子を発見した。",["中性子"],["チャドウィック"],[]],[1935,"ナイロンの開発","産業・技術","カロザースらが合成繊維ナイロンを開発した。",["高分子"],[],["C","N"]],[1938,"核分裂の発見","原子・放射線","ハーンとシュトラスマンの実験結果をマイトナーとフリッシュが核分裂として解釈した。",["核分裂"],["ハーン","マイトナー"],["U"]],[1946,"核磁気共鳴の観測","産業・技術","核磁気共鳴の実験的観測が進み、後のNMR分析法につながった。",[],[],[]],[1951,"フェロセンの発見","有機・生命","有機金属化合物フェロセンが報告され、有機金属化学が発展した。",["有機化合物"],[],["Fe"]],[1953,"DNA二重らせんモデル","有機・生命","ワトソンとクリックが、フランクリンらのX線回折データなどを踏まえ構造モデルを提案した。",["DNA"],["ワトソン","クリック"],["C","P"]],[1954,"シリコン太陽電池","産業・技術","ベル研究所が実用的なシリコン太陽電池を発表した。",[],[],["Si"]],[1960,"レーザーの実現","産業・技術","メイマンが最初のレーザー発振を実現した。",[],[],[]],[1963,"チーグラー・ナッタ触媒の評価","産業・技術","高分子の立体規則性重合に関する成果がノーベル化学賞を受賞した。",["高分子","触媒"],[],[]],[1970,"鈴木・宮浦カップリングへの研究基盤","有機・生命","遷移金属触媒を用いる有機合成が発展した時期。",["触媒","有機化合物"],[],["Pd"]],[1972,"導電性高分子の研究","産業・技術","ポリアセチレンなどの導電性高分子研究が進展した。",["高分子"],["白川英樹"],["C"]],[1973,"MRIの画像化研究","産業・技術","磁気共鳴を用いて画像を得る研究が進展した。",[],[],[]],[1980,"パラジウム触媒クロスカップリング","有機・生命","鈴木・宮浦反応などの有機合成法が報告された。",["触媒","有機化合物"],["鈴木章・根岸英一"],["Pd"]],[1983,"PCR法の着想","有機・生命","マリスがDNAの特定領域を増幅するPCR法を着想した。",["DNA"],["キャリー・マリス"],[]],[1985,"フラーレンC₆₀の発見","元素・物質","炭素60個からなるかご状分子が発見された。",["有機化合物"],[],["C"]],[1986,"高温超伝導体の発見","産業・技術","銅酸化物で比較的高い温度の超伝導が発見された。",[],[],["Cu"]],[1991,"リチウムイオン電池の商用化","産業・技術","充電可能なリチウムイオン電池の商用販売が始まった。",["二次電池"],["吉野彰"],["Li"]],[1991,"カーボンナノチューブの報告","元素・物質","飯島澄男が多層カーボンナノチューブを報告した。",[],[],["C"]],[2004,"グラフェンの単離","元素・物質","単層の炭素シートが分離され、特性研究が加速した。",[],[],["C"]],[2012,"CRISPR-Cas9の遺伝子編集応用基盤","有機・生命","標的DNAを切断するプログラム可能な仕組みが報告された。",["DNA"],[],[]],[2016,"元素113の名称がニホニウムに決定","元素・物質","日本の研究グループが発見した元素113にニホニウムの名称が正式承認された。",["原子番号"],["森田浩介"],["Nh"]],[2019,"リチウムイオン電池研究がノーベル化学賞","産業・技術","吉野彰、グッドイナフ、ウィッティンガムが受賞した。",["二次電池"],["吉野彰","グッドイナフ","ウィッティンガム"],["Li"]],[2020,"ゲノム編集研究がノーベル化学賞","有機・生命","シャルパンティエとダウドナがCRISPR-Cas9の研究で受賞した。",["DNA"],[],[]],[2022,"クリックケミストリーがノーベル化学賞","有機・生命","分子を効率よく結合させる反応の研究が評価された。",["有機化合物"],[],[]],[2023,"量子ドット研究がノーベル化学賞","量子・構造","量子ドットの発見と合成の研究が評価された。",[],[],["Cd"]],[2024,"タンパク質構造予測と設計がノーベル化学賞","有機・生命","計算によるタンパク質構造予測と新規設計の研究が評価された。",["タンパク質"],[],[]],[2025,"金属有機構造体の研究がノーベル化学賞","産業・技術","多孔性の金属有機構造体（MOF）の開発が評価された。",["錯体","配位結合"],["北川進"],[]]];
+const SCIENCE_ERAS=[["ancient","古代〜1599年",null,1599],["1600","1600年代",1600,1699],["1700","1700年代",1700,1799],["1800","1800年代",1800,1899],["1900","1900〜1949年",1900,1949],["1950","1950〜1999年",1950,1999],["2000","2000年以降",2000,null]];
+const SCIENCE_CATEGORIES=["すべて",...new Set(SCIENCE_EVENTS.map(e=>e[2]))];
+let timelineEra="all",timelineCategory="すべて",timelineOrder="asc";
+function timelineEraOf(year){return SCIENCE_ERAS.find(e=>(e[2]===null||year>=e[2])&&(e[3]===null||year<=e[3]))?.[0]||"ancient"}
+function timelineYear(y){return y<0?"紀元前"+Math.abs(y)+"年頃":y+"年"}
+function scienceTimeline(){
+ const rows=SCIENCE_EVENTS.filter(e=>(timelineEra==="all"||timelineEraOf(e[0])===timelineEra)&&(timelineCategory==="すべて"||e[2]===timelineCategory)&&hit(timelineYear(e[0]),e[1],e[2],e[3])).sort((a,b)=>timelineOrder==="asc"?a[0]-b[0]:b[0]-a[0]);
+ const select=(label,items,selected,attr)=>'<div class="timeline-filters"><strong>'+label+'</strong><div class="timeline-chips">'+items.map(([value,name])=>'<button type="button" '+attr+'="'+escapeHtml(value)+'" aria-pressed="'+(selected===value)+'">'+escapeHtml(name)+'</button>').join("")+'</div></div>';
+ return '<section class="timeline-intro"><h2>科学年表 <small>'+SCIENCE_EVENTS.length+'件</small></h2><p>化学を中心に、原子論・元素発見・生命科学・技術革新の歴史をたどれます。</p></section>'+
+ '<div class="timeline-toolbar">'+select("年代",[["all","すべて"],...SCIENCE_ERAS.map(e=>[e[0],e[1]])],timelineEra,"data-timeline-era")+
+ select("出来事の種類",SCIENCE_CATEGORIES.map(c=>[c,c]),timelineCategory,"data-timeline-category")+
+ '<div class="timeline-order"><span>'+rows.length+'件を表示</span><button type="button" data-timeline-order="1">'+(timelineOrder==="asc"?"新しい順にする ↓":"古い順にする ↑")+'</button></div></div>'+
+ (rows.length?'<div class="science-timeline">'+rows.map((e,i)=>{
+ const links=termRelations({terms:e[4],people:e[5],elements:e[6]});
+ return '<article class="timeline-event"><div class="timeline-marker" aria-hidden="true"></div><div class="timeline-event-card"><div class="timeline-event-top"><time>'+timelineYear(e[0])+'</time><span class="timeline-kind">'+escapeHtml(e[2])+'</span></div><details class="entry-details"><summary><strong>'+escapeHtml(e[1])+'</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p>'+escapeHtml(e[3])+'</p>'+(links.includes("related-group")?'<div class="timeline-links"><h4>関連する内容</h4>'+links+'</div>':"")+'</div></details></div></article>';
+ }).join("")+'</div>':'<p class="empty">条件に一致する出来事がありません。年代や種類、検索条件を変更してください。</p>');
+}
+
 function draw(){stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
 document.addEventListener("click",ev=>{
- const t=ev.target.closest("[data-term-back],[data-note-add],[data-note-save],[data-note-delete],[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
+ const t=ev.target.closest("[data-timeline-era],[data-timeline-category],[data-timeline-order],[data-term-back],[data-note-add],[data-note-save],[data-note-delete],[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
  if(!t)return;
+ if(t.dataset.timelineEra!==undefined){timelineEra=t.dataset.timelineEra;draw();return}
+ if(t.dataset.timelineCategory!==undefined){timelineCategory=t.dataset.timelineCategory;draw();return}
+ if(t.dataset.timelineOrder!==undefined){timelineOrder=timelineOrder==="asc"?"desc":"asc";draw();return}
  if(t.dataset.termBack!==undefined){termFocus=null;termSelected=null;draw();if(termReturnScroll!==null){const y=termReturnScroll;termReturnScroll=null;requestAnimationFrame(()=>window.scrollTo({top:y,behavior:"instant"}));}return}
  if(t.dataset.noteAdd!==undefined){stickyEditing=stickyEditing===t.dataset.noteAdd?null:t.dataset.noteAdd;draw();return}
  if(t.dataset.noteSave!==undefined){const name=t.dataset.noteSave;const value=$("stickyText")?.value||"";stickyNotes[name]={text:value,updated:Date.now()};if(saveSticky()){stickyEditing=null;draw()}return}
