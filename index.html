@@ -189,6 +189,22 @@ body.menu-open{overflow:hidden}
 body[data-layout="desktop"] .compact-header{min-width:0}
 @media(max-width:700px){.compact-header{padding:10px 12px;margin-bottom:10px}.compact-header #q{font-size:16px}.header-top{margin-bottom:8px}main{padding-top:0}}
 @media(prefers-reduced-motion:reduce){.side-menu{transition:none}}
+
+/* Tap-to-expand glossary and researcher cards */
+.entry-details{width:100%}
+.entry-details>summary{display:flex;align-items:center;gap:12px;list-style:none;cursor:pointer;min-height:44px;user-select:none}
+.entry-details>summary::-webkit-details-marker{display:none}
+.entry-details>summary::marker{content:""}
+.entry-details>summary strong{font-size:1.05rem;flex:1}
+.term-card .entry-details>summary{flex-wrap:wrap;row-gap:2px}
+.term-card .entry-details>summary .term-category-label{flex-basis:100%}
+.entry-chevron{font-size:1.35rem;color:var(--sub);transition:transform .15s}
+.entry-details[open] .entry-chevron{transform:rotate(180deg)}
+.entry-body{padding-top:12px;border-top:1px solid var(--line);margin-top:10px}
+.entry-body>p{margin:0 0 12px;line-height:1.7}
+.entry-details>summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:5px}
+.researcher-card .entry-body .meta{margin-bottom:8px}
+@media(prefers-reduced-motion:reduce){.entry-chevron{transition:none}}
 </style>
 </head>
 <body>
@@ -553,7 +569,7 @@ function glossary(){
  const matches=all.filter(t=>termFocus?t.name===termFocus:(termCategory==="all"||t.category===termCategory)&&hit(t.name,t.desc,t.category));
  return '<section class="glossary-head"><div><p class="meta">CHEMISTRY GLOSSARY</p><h2>化学用語辞典 <small>'+all.length+'語</small></h2><p>分野別に探して、関連する元素・反応・研究者へ移動できます。</p></div></section>'+
  '<div class="term-categories" role="group" aria-label="用語カテゴリ">'+groups.map(c=>'<button type="button" data-term-cat="'+escapeHtml(c)+'" aria-pressed="'+(termCategory===c)+'">'+(c==="all"?"すべて":escapeHtml(c))+' <small>'+ (c==="all"?all.length:all.filter(t=>t.category===c).length)+'</small></button>').join("")+'</div>'+
- (termFocus?'<div class="focus-header"><button class="utility" data-term-back="1">← 用語一覧に戻る</button></div>':'')+'<p class="meta">'+matches.length+'件の用語</p><div class="term-grid">'+matches.map(t=>'<article class="item term-card"><span class="term-category-label">'+escapeHtml(t.category)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p>'+stickyButton(t.name)+(stickyEditing===t.name?stickyEditor(t.name):'')+'<button class="term-detail-button" data-term-open="'+escapeHtml(t.name)+'">関連情報を見る →</button>'+(termSelected===t.name?'<div class="term-related"><h4>関連する内容</h4>'+termRelations(t)+'</div>':"")+'</article>').join("")+'</div>';
+ (termFocus?'<div class="focus-header"><button class="utility" data-term-back="1">← 用語一覧に戻る</button></div>':'')+'<p class="meta">'+matches.length+'件の用語</p><div class="term-grid">'+matches.map(t=>'<article class="item term-card"><details class="entry-details" '+(termSelected===t.name?'open':'')+'><summary><span class="term-category-label">'+escapeHtml(t.category)+'</span><strong>'+escapeHtml(t.name)+'</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p>'+escapeHtml(t.desc)+'</p><div class="term-related"><h4>関連する内容</h4>'+termRelations(t)+'</div>'+stickyButton(t.name)+(stickyEditing===t.name?stickyEditor(t.name):'')+'</div></details></article>').join("")+'</div>';
 }
 function focusedList(arr,kind,fn){
  const found=focusItem&&focusItem.kind===kind;
@@ -576,7 +592,7 @@ function view(){
  if(tab=="hl")return hl();
  if(tab=="pt")return pt();
  if(tab=="rx")return focusedList(RX,"reaction",a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`);
- if(tab=="rs")return focusedList(RS,"person",a=>`<article class="item"><h3>${a[0]}</h3><p class="meta">${a[1]}・${a[2]}</p><p>${a[3]}</p></article>`);
+ if(tab=="rs")return focusedList(RS,"person",a=>`<article class="item researcher-card"><details class="entry-details" ${focusItem?.kind==="person"&&focusItem.name===a[0]?"open":""}><summary><strong>${escapeHtml(a[0])}</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p class="meta">${escapeHtml(a[1])}・${escapeHtml(a[2])}</p><p>${escapeHtml(a[3])}</p></div></details></article>`);
  return glossary()}
 function draw(){stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
 document.addEventListener("click",ev=>{
