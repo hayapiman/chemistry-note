@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>化学ノート</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap">
+<style>
+:root{--bg:#eef3f6;--panel:#fff;--ink:#17214a;--sub:#5a6485;--line:#cdd7e0;--cl:87%;--accent:#2f4bd8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a2e;--panel:#1b2540;--ink:#e8ecfa;--sub:#9aa5c8;--line:#2c3860;--cl:26%;--accent:#8ea2ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121a2e;--panel:#1b2540;--ink:#e8ecfa;--sub:#9aa5c8;--line:#2c3860;--cl:26%;--accent:#8ea2ff;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;line-height:1.7}
+header,main{max-width:1100px;margin:0 auto;padding:0 16px}
+header{padding-top:20px}
+h1{font-family:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;font-size:2rem;margin:0;letter-spacing:.04em}
+.lead{margin:2px 0 14px;color:var(--sub);font-size:.95rem}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);flex:1 1 320px}
+.tabs button{font:inherit;font-weight:700;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 14px;color:var(--sub);cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--accent);border-color:var(--accent)}
+input[type=search]{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);flex:1 1 200px;min-width:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chip{font:inherit;font-size:.8rem;border:2px solid transparent;border-radius:99px;padding:2px 10px;cursor:pointer;color:var(--ink);background:hsl(var(--h) 65% var(--cl))}
+.chip[aria-pressed=true]{border-color:var(--ink)}
+.scroll{overflow-x:auto;padding-bottom:8px}
+.pt{display:grid;grid-template-columns:repeat(18,minmax(40px,1fr));grid-template-rows:repeat(7,auto) 12px repeat(2,auto);gap:3px;min-width:780px}
+.el{font:inherit;border:0;border-radius:4px;padding:2px 0 3px;text-align:center;cursor:pointer;color:var(--ink);background:hsl(var(--h) 65% var(--cl));line-height:1.15}
+.el b{display:block;font-size:1.05rem}
+.el i{display:block;font-style:normal;font-size:.55rem;opacity:.75}
+.el small{font-size:.55rem;display:block;opacity:.8}
+.el.dim{opacity:.18}
+.el[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:1px;position:relative}
+.card{grid-column:3/13;grid-row:1/4;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;display:flex;gap:16px;align-items:center;min-height:0}
+.card .sym{font-family:"Shippori Mincho",serif;font-size:3.6rem;line-height:1;min-width:92px;text-align:center;border-radius:8px;padding:8px 4px;background:hsl(var(--h) 65% var(--cl))}
+.card h2{margin:0;font-size:1.25rem}
+.card p{margin:2px 0;font-size:.85rem;color:var(--sub)}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.item h3{margin:0 0 2px;font-size:1.05rem}
+.item .meta{font-size:.8rem;color:var(--sub);margin:0 0 6px}
+.item p{margin:4px 0 0;font-size:.92rem;max-width:42em}
+.eq{font-family:"Shippori Mincho",serif;font-size:1.25rem;margin:6px 0;overflow-x:auto;white-space:nowrap}
+.tag{display:inline-block;font-size:.75rem;border-radius:99px;padding:0 9px;background:hsl(var(--h) 65% var(--cl));margin-right:6px}
+.empty{color:var(--sub);padding:24px 0}
+footer{max-width:1100px;margin:24px auto;padding:0 16px;color:var(--sub);font-size:.8rem}
+@media (prefers-reduced-motion:no-preference){.card{transition:background .2s}}
+.lab canvas{width:100%;height:auto;display:block;border-radius:10px;background:#0f1830}
+.hr{display:grid;grid-template-columns:76px 1fr 120px;gap:8px;align-items:center;width:100%;font:inherit;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px 10px;margin:0 0 4px;color:var(--ink);cursor:pointer;text-align:left}
+.hr[aria-pressed=true]{border-color:var(--accent);border-width:2px}
+.hb{display:block;height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.hb i{display:block;height:100%}
+.ht{font-size:.85rem;text-align:right;color:var(--sub)}
+#hs{width:100%;margin:8px 0}
+#dc{width:100%;max-width:400px;height:auto;display:block}
+
+/* Improved visual system */
+:root{--shadow:0 10px 28px rgba(19,35,72,.07)}
+body{background:radial-gradient(circle at 85% 0%,rgba(86,135,236,.10),transparent 38%),var(--bg)}
+header{padding-top:30px}h1{font-size:clamp(2rem,4vw,2.8rem)}
+.lead{margin-bottom:20px}.bar{gap:12px}.tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:thin}
+.tabs button{white-space:nowrap}.utility{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:8px 13px;cursor:pointer}
+.item,.card{box-shadow:var(--shadow);border-radius:16px}.item{transition:transform .16s,box-shadow .16s}.item:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(19,35,72,.12)}
+.el{border-radius:6px;transition:transform .12s,filter .12s}.el:hover{transform:scale(1.06);filter:brightness(1.04);z-index:2}
+.chip{padding:5px 12px}.quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.quiz-option{font:inherit;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:13px;border-radius:12px;cursor:pointer}
+.quiz-option:disabled{cursor:default;opacity:.8}.quiz-option.correct{border:2px solid #19a76c}.quiz-option.wrong{border:2px solid #e25c66}
+.quiz-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+@media(max-width:650px){header,main{padding-left:12px;padding-right:12px}.bar{align-items:stretch}.tabs{order:2;flex-basis:100%}.utility{order:0}input[type=search]{order:1}.quiz-options{grid-template-columns:1fr}.card{padding:8px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>化学ノート</h1>
+  <p class="lead">元素、反応、研究者、用語をひとつの画面でしらべられます。</p>
+  <div class="bar">
+    <button id="themeToggle" class="utility" type="button" aria-label="テーマ切替">☾ テーマ切替</button>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <input type="search" id="q" placeholder="名前・記号・キーワードで検索" aria-label="検索">
+  </div>
+</header>
+<main id="main"></main>
+<footer>原子量は概数です。()内の数値は最も安定な同位体の質量数です。</footer>
+<script>
+const CATS={alkali:["アルカリ金属",355],alkaline:["アルカリ土類金属",25],trans:["遷移金属",48],post:["その他の金属",185],metalloid:["半金属",160],nonmetal:["非金属",120],halogen:["ハロゲン",215],noble:["貴ガス",270],lanth:["ランタノイド",300],actin:["アクチノイド",330]};
+const S={alkali:[3,11,19,37,55,87],alkaline:[4,12,20,38,56,88],noble:[2,10,18,36,54,86,118],halogen:[9,17,35,53,85,117],metalloid:[5,14,32,33,51,52],nonmetal:[1,6,7,8,15,16,34],post:[13,31,49,50,81,82,83,84,113,114,115,116]};
+const RAW="H 水素 1.008|He ヘリウム 4.003|Li リチウム 6.94|Be ベリリウム 9.012|B ホウ素 10.81|C 炭素 12.011|N 窒素 14.007|O 酸素 15.999|F フッ素 18.998|Ne ネオン 20.180|Na ナトリウム 22.990|Mg マグネシウム 24.305|Al アルミニウム 26.982|Si ケイ素 28.085|P リン 30.974|S 硫黄 32.06|Cl 塩素 35.45|Ar アルゴン 39.948|K カリウム 39.098|Ca カルシウム 40.078|Sc スカンジウム 44.956|Ti チタン 47.867|V バナジウム 50.942|Cr クロム 51.996|Mn マンガン 54.938|Fe 鉄 55.845|Co コバルト 58.933|Ni ニッケル 58.693|Cu 銅 63.546|Zn 亜鉛 65.38|Ga ガリウム 69.723|Ge ゲルマニウム 72.630|As ヒ素 74.922|Se セレン 78.971|Br 臭素 79.904|Kr クリプトン 83.798|Rb ルビジウム 85.468|Sr ストロンチウム 87.62|Y イットリウム 88.906|Zr ジルコニウム 91.224|Nb ニオブ 92.906|Mo モリブデン 95.95|Tc テクネチウム (98)|Ru ルテニウム 101.07|Rh ロジウム 102.91|Pd パラジウム 106.42|Ag 銀 107.87|Cd カドミウム 112.41|In インジウム 114.82|Sn スズ 118.71|Sb アンチモン 121.76|Te テルル 127.60|I ヨウ素 126.90|Xe キセノン 131.29|Cs セシウム 132.91|Ba バリウム 137.33|La ランタン 138.91|Ce セリウム 140.12|Pr プラセオジム 140.91|Nd ネオジム 144.24|Pm プロメチウム (145)|Sm サマリウム 150.36|Eu ユウロピウム 151.96|Gd ガドリニウム 157.25|Tb テルビウム 158.93|Dy ジスプロシウム 162.50|Ho ホルミウム 164.93|Er エルビウム 167.26|Tm ツリウム 168.93|Yb イッテルビウム 173.05|Lu ルテチウム 174.97|Hf ハフニウム 178.49|Ta タンタル 180.95|W タングステン 183.84|Re レニウム 186.21|Os オスミウム 190.23|Ir イリジウム 192.22|Pt 白金 195.08|Au 金 196.97|Hg 水銀 200.59|Tl タリウム 204.38|Pb 鉛 207.2|Bi ビスマス 208.98|Po ポロニウム (209)|At アスタチン (210)|Rn ラドン (222)|Fr フランシウム (223)|Ra ラジウム (226)|Ac アクチニウム (227)|Th トリウム 232.04|Pa プロトアクチニウム 231.04|U ウラン 238.03|Np ネプツニウム (237)|Pu プルトニウム (244)|Am アメリシウム (243)|Cm キュリウム (247)|Bk バークリウム (247)|Cf カリホルニウム (251)|Es アインスタイニウム (252)|Fm フェルミウム (257)|Md メンデレビウム (258)|No ノーベリウム (259)|Lr ローレンシウム (266)|Rf ラザホージウム (267)|Db ドブニウム (268)|Sg シーボーギウム (269)|Bh ボーリウム (270)|Hs ハッシウム (277)|Mt マイトネリウム (278)|Ds ダームスタチウム (281)|Rg レントゲニウム (282)|Cn コペルニシウム (285)|Nh ニホニウム (286)|Fl フレロビウム (289)|Mc モスコビウム (290)|Lv リバモリウム (293)|Ts テネシン (294)|Og オガネソン (294)";
+const F={1:"宇宙でいちばん多い元素。水の成分でもあります。",2:"空気より軽く、風船や極低温の冷却に使われます。",6:"生命の骨組み。ダイヤモンドも黒鉛も炭素だけでできています。",7:"空気の約78%を占めます。肥料の原料にもなります。",8:"呼吸や燃焼に欠かせない元素。地殻にも最も多く含まれます。",11:"水に入れると激しく反応する金属。食塩の成分です。",14:"砂や岩石の主成分。半導体や太陽電池に使われます。",17:"殺菌や食塩の成分として身近な元素です。",26:"最もよく使われる金属。血液中のヘモグロビンにも含まれます。",29:"電気をよく通し、電線に使われます。",47:"電気も熱も最もよく通す金属です。",79:"さびにくく、古くから装飾品に使われてきた金属です。",80:"常温で液体の唯一の金属です。",92:"原子力発電の燃料に使われる重い元素です。",113:"日本の理化学研究所が発見し、2016年に命名されたアジア初の元素です。"};
+const EL=RAW.split("|").map((s,i)=>{const[a,b,c]=s.split(" ");return{z:i+1,sym:a,name:b,mass:c}});
+const POS=[0,2,10,18,36,54,86,118];
+function catOf(z){for(const k in S)if(S[k].includes(z))return k;return z>=57&&z<=71?"lanth":z>=89&&z<=103?"actin":"trans"}
+function place(z){let i=1;while(z>POS[i])i++;const o=z-POS[i-1]-1;let r=i,c;
+ if(i==1)c=o?18:1;else if(i<4)c=o<2?o+1:o+11;else if(i<6)c=o+1;
+ else if(o<2)c=o+1;else if(o<17){c=o+1;r=i+3}else c=o-13;return[r,c]}
+const RX=[
+["燃焼(メタン)","酸化","CH₄ + 2O₂ → CO₂ + 2H₂O","都市ガスの主成分メタンが酸素と結びつき、熱と光を出します。"],
+["水素の燃焼","酸化","2H₂ + O₂ → 2H₂O","水素が燃えると水だけが生じます。燃料電池の原理にもなっています。"],
+["水の電気分解","分解","2H₂O → 2H₂ + O₂","水に電気を流すと水素と酸素に分かれます。体積比は水素:酸素=2:1です。"],
+["中和","酸と塩基","HCl + NaOH → NaCl + H₂O","酸と塩基が打ち消し合い、塩と水ができます。"],
+["光合成","合成","6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂","植物が光のエネルギーで二酸化炭素と水からブドウ糖と酸素をつくります。"],
+["鉄のさび","酸化","4Fe + 3O₂ → 2Fe₂O₃","鉄がゆっくり酸化して赤さびになります。"],
+["石灰石と塩酸","気体発生","CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂","二酸化炭素が泡として出ます。石灰水を白くにごらせて確かめられます。"],
+["銅と硝酸銀","置換","Cu + 2AgNO₃ → Cu(NO₃)₂ + 2Ag","イオンになりやすい銅が銀イオンを追い出し、銀が析出します。"],
+["沈殿の生成","沈殿","AgNO₃ + NaCl → AgCl↓ + NaNO₃","塩化物イオンと銀イオンが出会うと白い塩化銀が沈みます。"],
+["アンモニア合成","可逆反応","N₂ + 3H₂ ⇌ 2NH₃","ハーバー・ボッシュ法の反応です。高温・高圧と触媒で効率よく進めます。"],
+["テルミット反応","酸化還元","2Al + Fe₂O₃ → Al₂O₃ + 2Fe","アルミニウムが酸化鉄から酸素を奪い、約2500℃近い高温で鉄が溶けます。"],
+["酸化銅の還元","還元","CuO + H₂ → Cu + H₂O","黒い酸化銅が水素に酸素を奪われ、赤い銅になります。"],
+["過酸化水素の分解","分解","2H₂O₂ → 2H₂O + O₂","二酸化マンガンなどの触媒を加えると、酸素が勢いよく発生します。"],
+["エタノールの燃焼","酸化","C₂H₅OH + 3O₂ → 2CO₂ + 3H₂O","アルコールランプの燃料のエタノールが、青白い炎を上げて燃えます。"],
+["炭酸水素ナトリウムの熱分解","熱分解","2NaHCO₃ → Na₂CO₃ + H₂O + CO₂","重曹を加熱すると二酸化炭素が出ます。ホットケーキがふくらむしくみです。"],
+["鉄と硫黄","合成","Fe + S → FeS","混ぜて加熱すると、熱を出しながら黒い硫化鉄ができます。"],
+["ナトリウムと塩素","合成","2Na + Cl₂ → 2NaCl","ナトリウムが塩素中で激しく燃え、食塩ができます。"],
+["エステル化","有機反応","CH₃COOH + C₂H₅OH ⇌ CH₃COOC₂H₅ + H₂O","酸とアルコールから、果物のような香りのエステルと水ができます。"],
+["ダニエル電池","電池","Zn + Cu²⁺ → Zn²⁺ + Cu","イオンになりやすい亜鉛が電子を放ち、導線を通って銅側へ流れます。"],
+["オストワルト法","酸化","4NH₃ + 5O₂ → 4NO + 6H₂O","アンモニアを白金触媒で酸化し、硝酸の原料をつくる工業的な方法です。"]];
+const RS=[
+["ラヴォアジエ","1743–1794","フランス","燃焼が酸素との結合であることを示し、質量保存の法則を確立しました。近代化学の父と呼ばれます。"],
+["ドルトン","1766–1844","イギリス","すべての物質は原子からなるという原子説を唱えました。"],
+["メンデレーエフ","1834–1907","ロシア","元素を原子量順に並べて周期表をつくり、未発見元素の存在を予言しました。"],
+["マリー・キュリー","1867–1934","ポーランド・フランス","ポロニウムとラジウムを発見。物理学賞と化学賞の2度のノーベル賞を受けました。"],
+["フリッツ・ハーバー","1868–1934","ドイツ","空気中の窒素からアンモニアを合成する方法を開発し、化学肥料の大量生産を可能にしました。"],
+["ポーリング","1901–1994","アメリカ","化学結合の本質を解明し、電気陰性度の概念を提案しました。"],
+["白川英樹","1936–","日本","電気を通すプラスチック(導電性高分子)を発見。2000年ノーベル化学賞。"],
+["野依良治","1938–","日本","右手型・左手型の分子をつくり分ける不斉合成を開発。2001年ノーベル化学賞。"],
+["田中耕一","1959–","日本","タンパク質などの巨大分子を壊さずに質量分析する方法を開発。2002年ノーベル化学賞。"],
+["鈴木章・根岸英一","1930– / 1935–2021","日本","パラジウム触媒で炭素どうしをつなぐクロスカップリングを開発。2010年ノーベル化学賞。"],
+["吉野彰","1948–","日本","リチウムイオン電池の基本構成を確立。2019年ノーベル化学賞。"],
+["ボイル","1627–1691","アイルランド","気体の圧力と体積が反比例するボイルの法則を発見し、元素の概念を整理しました。"],
+["アボガドロ","1776–1856","イタリア","同温・同圧・同体積の気体には同数の分子が含まれるという分子説を提唱しました。"],
+["ベルセリウス","1779–1848","スウェーデン","アルファベットを用いた元素記号を考案し、多くの元素の原子量を測定しました。"],
+["アレニウス","1859–1927","スウェーデン","電解質が水中でイオンに分かれるという電離説を唱え、酸・塩基を定義しました。"],
+["ベクレル","1852–1908","フランス","ウランの化合物から出る放射線を発見(1896年)しました。放射能の単位Bqに名を残します。"],
+["ラザフォード","1871–1937","ニュージーランド・イギリス","α線とβ線を区別し、金箔への散乱実験で原子核を発見しました。1908年ノーベル化学賞。"],
+["ボーア","1885–1962","デンマーク","電子が決まった軌道を回るボーアの原子模型を提案し、スペクトルを説明しました。"],
+["福井謙一","1918–1998","日本","フロンティア軌道理論で化学反応の起こりやすさを説明。1981年ノーベル化学賞。"],
+["下村脩","1928–2018","日本","オワンクラゲから緑色蛍光タンパク質(GFP)を発見。2008年ノーベル化学賞。"],
+["森田浩介","1957–","日本","理化学研究所でニホニウム(113番元素)の合成に成功した研究グループを率いました。"],
+["北川進","1951–","日本","ガスなどを吸着できる金属有機構造体(MOF)の開発に貢献。2025年ノーベル化学賞。"]];
+const GL=[
+["原子","物質をつくる基本的な粒。中心の原子核と、まわりの電子からできています。"],
+["分子","いくつかの原子が結びついた粒。水分子はH₂Oです。"],
+["イオン","電子を失ったり受け取ったりして電気を帯びた原子や原子団。"],
+["電子","負の電気をもつ小さな粒子。化学結合や酸化還元に関わります。"],
+["同位体","陽子の数が同じで中性子の数が異なる原子。炭素12と炭素14など。"],
+["共有結合","原子どうしが電子を共有してできる結合。"],
+["イオン結合","陽イオンと陰イオンが静電気の力で引き合ってできる結合。"],
+["酸と塩基","酸は水素イオンを出すもの、塩基は水酸化物イオンを出すものや水素イオンを受け取るもの。"],
+["pH","水溶液の酸性・アルカリ性の度合い。7が中性で、小さいほど酸性です。"],
+["モル","6.02×10²³個の粒子の集まりを1molとする物質量の単位。"],
+["触媒","自分は変化せず、反応の速さを変える物質。"],
+["酸化と還元","酸化は酸素や電子を失う変化、還元はその逆。同時に起こります。"],
+["化合物","2種類以上の元素からなる純物質。水や食塩など。"],
+["周期律","元素を原子番号順に並べると、性質が周期的に似てくる規則性。"],
+["質量数","原子核に含まれる陽子と中性子の数の合計。"],
+["同素体","同じ元素だけでできていて性質が異なる単体。ダイヤモンドと黒鉛など。"],
+["放射性同位体","原子核が不安定で、放射線を出して別の原子核に変わる同位体。トレーサーや年代測定に使われます。"],
+["半減期","放射性核種の原子数が半分になるまでの時間。炭素14は約5730年、ヨウ素131は約8日。nを経過した後の残りは (1/2)ⁿ です。"],
+["α崩壊","原子核がヘリウム4の原子核(陽子2・中性子2)を放出する崩壊。原子番号は2、質量数は4減ります。例: ウラン238 → トリウム234。"],
+["β⁻崩壊","中性子が陽子に変わり、電子と反電子ニュートリノが放出される崩壊。質量数は変わらず、原子番号が1増えます。"],
+["γ線","励起した原子核が安定な状態に戻るときに出る高エネルギーの電磁波。原子番号も質量数も変わりません。"],
+["質量欠損","原子核の質量が、構成する核子の質量の合計より小さくなる差。E=mc²に従い、結合エネルギーとして現れます。"],
+["核分裂","ウラン235などの重い原子核が中性子を受けて分裂し、大きなエネルギーを出す反応。"],
+["核融合","軽い原子核どうしが合体する反応。太陽の内部では水素からヘリウムができています。"],
+["価電子","最も外側の電子殻にある電子。元素の化学的性質や結合のしかたを決めます。"],
+["電子殻と軌道","電子はK殻・L殻・M殻…に分かれて存在し、さらにs・p・d・f軌道に入ります。"],
+["電気陰性度","結合している原子が電子を引きつける強さ。フッ素が最大で、ポーリングの値では4.0です。"],
+["イオン化エネルギー","原子から電子を1個取り去るのに必要なエネルギー。アルカリ金属で小さく、貴ガスで大きくなります。"],
+["金属結合","自由電子が金属原子を結びつける結合。電気伝導性や展性・延性の原因です。"],
+["水素結合","F・O・Nに結合した水素と、別の分子の非共有電子対との間にはたらく引力。水の沸点が高い理由です。"],
+["ファンデルワールス力","分子どうしの間にはたらく弱い引力。分子が大きいほど強くなり、沸点が上がります。"],
+["活性化エネルギー","反応が進むために越える必要があるエネルギーの山。触媒はこれを下げます。"],
+["ルシャトリエの原理","平衡状態で濃度・圧力・温度を変えると、その変化を打ち消す向きに平衡が移動するという原理。"],
+["酸化数","原子が電子をどれだけ失った・得たかを表す数。酸化還元反応の判定に使います。"],
+["溶解度積","難溶性の塩が飽和しているときの、イオン濃度の積。この値を超えると沈殿します。"],
+["異性体","分子式は同じでも、構造や立体配置が異なる化合物。"],
+["錯体","金属イオンに配位子が結合した化合物。ヘモグロビンや抗がん剤シスプラチンなど。"],
+["放射能","物質が放射線を出す能力、または放射線を出す性質のこと。"],
+["ベクレルとシーベルト","ベクレル(Bq)は1秒間に崩壊する原子核の数、シーベルト(Sv)は放射線が人体に与える影響の大きさを表す単位です。"],
+["崩壊系列","放射性核種が崩壊を繰り返し、最終的に安定な核種(鉛など)になるまでの連なり。ウラン系列、トリウム系列などがあります。"],
+["放射性炭素年代測定","炭素14が半減期5730年で減ることを利用して、遺物の年代を求める方法。"],
+["魔法数","陽子や中性子がこの数のとき原子核が特に安定になる数。2、8、20、28、50、82、126など。"],
+["標準電極電位","金属などのイオンへのなりやすさを、水素電極を基準にして電圧で表したもの。"],
+["ファラデーの法則","電気分解で析出する物質の量は、流した電気量に比例するという法則。"],
+["エンタルピー","一定圧力のもとで物質がもつ熱エネルギー。反応熱はその変化量です。"],
+["ヘスの法則","反応熱は、反応の途中の経路によらず、最初と最後の状態だけで決まる。"],
+["緩衝液","少量の酸や塩基を加えてもpHがほとんど変わらない溶液。"],
+["官能基","有機化合物の性質を決める原子の集まり。ヒドロキシ基(-OH)、カルボキシ基(-COOH)など。"],
+["重合","小さな分子(単量体)が次々につながり、大きな分子(高分子)になる反応。"],
+["コロイド","直径1〜100nmほどの粒子が液体などに分散した状態。牛乳や墨汁など。"],
+["浸透圧","半透膜をへだてて濃度が違う溶液があるとき、溶媒が濃いほうへ移動しようとする圧力。"],
+["配位結合","結合する電子対を片方の原子が一方的に出してできる共有結合。錯体にみられます。"]];
+let tab="pt",q="",filt=null,sel=8,cur=0;
+const TABS=[["pt","周期表"],["rx","化学反応"],["lab","擬似実験"],["hl","半減期"],["rs","研究者"],["gl","用語"],["quiz","学習クイズ"]];
+let quizIndex=0,quizScore=0,quizAnswered=false,quizChoice=-1;
+let favorites=new Set(JSON.parse(localStorage.getItem("chemistry-favorites")||"[]"));
+const $=id=>document.getElementById(id);
+const hit=(...a)=>!q||a.join(" ").toLowerCase().includes(q);
+function tabs(){$("tabs").innerHTML=TABS.map(([k,n])=>`<button role="tab" aria-selected="${k==tab}" data-t="${k}">${n}</button>`).join("")}
+function pt(){
+ const e=EL[sel-1],c=catOf(sel),[r,col]=place(sel);
+ const legend=Object.entries(CATS).map(([k,[n,h]])=>`<button class="chip" style="--h:${h}" aria-pressed="${filt==k}" data-c="${k}">${n}</button>`).join("");
+ const cells=EL.map(x=>{const k=catOf(x.z),[rr,cc]=place(x.z),on=hit(x.sym,x.name,x.z)&&(!filt||filt==k);
+  return `<button class="el${on?"":" dim"}" style="--h:${CATS[k][1]};grid-row:${rr};grid-column:${cc}" aria-pressed="${x.z==sel}" aria-label="${x.z} ${x.name}" data-z="${x.z}"><small>${x.z}</small><b>${x.sym}</b><i>${x.name}</i></button>`}).join("");
+ const per=r>7?(r==9?6:7):r, grp=(r>7||(sel>=57&&sel<=71)||(sel>=89&&sel<=103))?"—":col;
+ return `<div class="legend">${legend}</div><div class="scroll"><div class="pt">
+ <div class="card" style="--h:${CATS[c][1]}"><div class="sym">${e.sym}</div><div><h2>${e.z}　${e.name}</h2><p>${CATS[c][0]}・第${per}周期・${grp==="—"?"f-ブロック":"第"+grp+"族"}・原子量 ${e.mass}</p><p>${F[e.z]||"周期表の位置から、似た性質の元素を見つけてみましょう。"}</p>${isoLine(e.sym)}<button class="utility" data-fav="${e.z}" aria-pressed="${favorites.has(e.z)}">${favorites.has(e.z)?"★ お気に入り登録済み":"☆ お気に入りに追加"}</button> ${EX.some(a=>a.k==e.sym)?`<button class="chip" style="--h:215" data-x="${e.sym}">この元素の実験を見る</button>`:""}</div></div>${cells}</div></div>`}
+function list(arr,fn,key){const h=arr.filter(a=>hit(...a)).map(fn).join("");return h?`<div class="list">${h}</div>`:`<p class="empty">「${key}」に一致する項目はありません。</p>`}
+const W="#6fa8dc";
+const EX=[
+{k:"Na",t:"ナトリウムと水",eq:"2Na + 2H₂O → 2NaOH + H₂↑",tx:"水面を走りながら水素を出し、発熱で溶けて丸くなります。黄色い炎が上がることもあり、溶液はアルカリ性になります。",ls:[W,W],pc:"#d5dbe0",mv:1,bub:.5,fl:["#ffd23a",1],sh:.8},
+{k:"K",t:"カリウムと水",eq:"2K + 2H₂O → 2KOH + H₂↑",tx:"ナトリウムより激しく反応し、水素が発火して赤紫色の炎を上げます。",ls:[W,W],pc:"#d5dbe0",mv:1,bub:.8,fl:["#c58bff",1.4],sh:.9},
+{k:"Li",t:"リチウムと水",eq:"2Li + 2H₂O → 2LiOH + H₂↑",tx:"アルカリ金属の中では最もおだやかに、泡を出しながら反応します。",ls:[W,W],pc:"#d5dbe0",mv:.5,bub:.4,sh:.7},
+{k:"Ca",t:"カルシウムと水",eq:"Ca + 2H₂O → Ca(OH)₂ + H₂↑",tx:"沈みながら水素の泡を出し、水に溶けにくい水酸化カルシウムで白くにごります。",ls:[W,"#d9e6ee"],pc:"#cfcfc6",sink:1,bub:.7,sh:.7},
+{k:"Mg",t:"マグネシウムの燃焼",eq:"2Mg + O₂ → 2MgO",tx:"まぶしい白い光を出して燃え、白い酸化マグネシウムになります。",pc:"#d8d8d8",gl:"#ffffff",sp:["#ffffff",1.5],sh:1},
+{k:"Fe",t:"スチールウールの燃焼",eq:"3Fe + 2O₂ → Fe₃O₄",tx:"細い鉄が火花を散らして燃え、黒い酸化鉄になります。",pc:"#8a8f99",sp:["#ff9a3a",2],gl:"#ff7a1a",sh:.3},
+{k:"Zn",t:"亜鉛と塩酸",eq:"Zn + 2HCl → ZnCl₂ + H₂↑",tx:"亜鉛が少しずつ溶けながら、水素の泡を出します。",ls:["#e6eef2","#e6eef2"],pc:"#b8c0c8",sink:1,bub:1,sh:.7},
+{k:"Cu",t:"銅と硝酸銀水溶液",eq:"Cu + 2AgNO₃ → Cu(NO₃)₂ + 2Ag",tx:"銅が溶けて溶液が青くなり、銅線のまわりに銀の結晶が伸びます。",ls:["#d9edf7","#3f7fd8"],pc:"#c8793a",rod:1,cr:"#e8eef5"},
+{k:"Ag",t:"塩化銀の沈殿",eq:"AgNO₃ + NaCl → AgCl↓ + NaNO₃",tx:"銀イオンと塩化物イオンが出会うと、白い塩化銀が沈みます。",ls:["#e6eef2","#e6eef2"],pp:"#f4f4f0"},
+{k:"Al",t:"テルミット反応",eq:"2Al + Fe₂O₃ → Al₂O₃ + 2Fe",tx:"アルミニウムが酸化鉄から酸素を奪い、2000℃を超える高温で溶けた鉄ができます。",pc:"#c9a87a",sp:["#ffb347",3],gl:"#ff9a3a",sh:.2,sz:22},
+{k:"H",t:"水素の爆鳴気",eq:"2H₂ + O₂ → 2H₂O",tx:"水素と酸素の混合気体に火を近づけると、「ポン」と音を立てて水になります。",pop:1},
+{k:"C",t:"石灰石と塩酸",eq:"CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑",tx:"炭酸カルシウムが溶けて、二酸化炭素の泡が出ます。",ls:["#e6eef2","#e6eef2"],pc:"#e9e6dc",sink:1,bub:.9,sh:.6}
+];
+EX.push(...[["Li","赤","#ff3b55"],["Na","黄","#ffd23a"],["K","赤紫","#c58bff"],["Ca","橙赤","#ff7a2a"],["Sr","深紅","#ff2a3a"],["Ba","黄緑","#b5e61d"],["Cu","青緑","#2ee6b0"]].map(([k,c,col])=>({k,t:k+"の炎色反応",eq:k+"の化合物を炎に入れる",tx:k+"を含む試料を炎に入れると、"+c+"色に光ります。熱で励起された電子がもとの軌道に戻るとき、元素ごとに決まった色の光を出すためです。",fl:[col,1],pc:"#9aa3b5",sz:6,gl:col})));
+let raf=0,raf2=0;
+const sup=n=>String(n).replace(/\d/g,d=>"⁰¹²³⁴⁵⁶⁷⁸⁹"[d]);
+function fmt(s){if(!s)return"安定";if(s<1)return(s*1000).toPrecision(2)+"ミリ秒";const m=[[1,"秒"],[60,"分"],[3600,"時間"],[86400,"日"],[3.15576e7,"年"]];let u=m[0];for(const x of m)if(s>=x[0])u=x;const v=s/u[0];if(v>=1e5){const e=Math.floor(Math.log10(v));return(v/10**e).toFixed(2)+"×10"+sup(e)+u[1]}return +v.toPrecision(3)+u[1]}
+const MODE={"α":"α崩壊","β⁻":"β⁻崩壊","β⁺":"β⁺崩壊","EC":"電子捕獲","IT":"核異性体転移(γ線放出)"};
+const ISO=[
+["H",1,0,"","軽水素。宇宙で最も多い同位体です。"],
+["H",2,0,"","重水素(D)。重水の成分で、天然には約0.015%含まれます。"],
+["H",3,3.888e8,"β⁻","トリチウム。核融合燃料や夜光塗料に使われます。"],
+["He",3,0,"","ヘリウム3。核融合燃料の候補です。"],
+["He",4,0,"","ヘリウム4。原子核はα粒子と同じです。"],
+["Be",7,4.6e6,"EC","宇宙線によって大気中でつくられます。"],
+["Be",10,4.39e13,"β⁻","宇宙線生成核種。氷床や堆積物の年代測定に使われます。"],
+["C",11,1222,"β⁺","PET検査(陽電子断層撮影)に使われます。"],
+["C",12,0,"","炭素12。原子量の基準で、天然の約98.9%です。"],
+["C",13,0,"","炭素13。天然の約1.1%で、NMRに使われます。"],
+["C",14,1.808e11,"β⁻","放射性炭素年代測定に使われます。生物が死ぬと取り込みが止まり、減る一方になります。"],
+["O",15,122,"β⁺","PET検査で血流の測定に使われます。"],
+["O",16,0,"","酸素16。天然の約99.8%です。"],
+["O",18,0,"","酸素18。氷床コアから過去の気温を推定するのに使われます。"],
+["F",18,6588,"β⁺","FDG-PET検査に使われる代表的な医療用核種です。"],
+["Na",22,8.2e7,"β⁺","陽電子を出す線源として使われます。"],
+["K",40,3.94e16,"β⁻","岩石の年代測定に使われます。人体や食品にもごく微量含まれます。"],
+["Fe",56,0,"","鉄56。原子核の結合エネルギーが最大級で、恒星の核融合の行き着く先です。"],
+["Co",60,1.66e8,"β⁻","強いγ線源。がん治療や医療器具の滅菌に使われます。"],
+["Sr",90,9.1e8,"β⁻","核分裂生成物。カルシウムに似て骨に蓄積しやすい核種です。"],
+["Tc","99m",21636,"IT","最も広く使われる医療用核種。γ線で画像診断をします。"],
+["I",123,47520,"EC","甲状腺や脳の画像診断に使われます。"],
+["I",129,4.95e14,"β⁻","長寿命の核分裂生成物。地下水の年代測定にも使われます。"],
+["I",131,6.93e5,"β⁻","甲状腺疾患の治療に使われます。原発事故時には被ばくの原因にもなります。"],
+["Xe",133,4.53e5,"β⁻","肺の換気機能の検査に使われます。"],
+["Cs",137,9.5e8,"β⁻","核分裂生成物。事故時の環境汚染で問題になりやすい核種です。"],
+["Au",198,2.33e5,"β⁻","がん治療や追跡調査に使われます。"],
+["Pb",206,0,"","鉛206。ウラン系列の最終的な安定核です。"],
+["Pb",208,0,"","鉛208。トリウム系列の終点で、陽子・中性子がともに魔法数の安定核です。"],
+["Pb",210,7.0e8,"β⁻","ウラン系列の途中でできる核種です。"],
+["Bi",209,6.3e26,"α","半減期が宇宙の年齢の約10億倍と長く、ほぼ安定とみなされます。"],
+["Po",210,1.196e7,"α","強いα線を出す。マリー・キュリーが発見したポロニウムです。"],
+["Rn",222,3.30e5,"α","ラドン。地中から出て空気中に広がる放射性の気体です。"],
+["Ra",226,5.05e10,"α","キュリー夫妻が発見したラジウムの主な同位体です。"],
+["Th",232,4.43e17,"α","トリウム系列の親核種。天然トリウムのほぼすべてです。"],
+["U",235,2.22e16,"α","核分裂しやすく、原子炉や原子爆弾の燃料になります。天然ウランの約0.7%です。"],
+["U",238,1.41e17,"α","天然ウランの約99.3%。地球の年代測定にも使われます。"],
+["Pu",238,2.77e9,"α","宇宙探査機の電源(原子力電池)に使われます。"],
+["Pu",239,7.6e11,"α","原子炉でウラン238から生成され、核分裂しやすい核種です。"],
+["Am",241,1.365e10,"α","煙感知器に使われています。"],
+["Cf",252,8.35e7,"α","自発核分裂を起こす強い中性子源です。"],
+["Og",294,6.9e-4,"α","現在確認されている最も重い元素の核種。1ミリ秒未満で崩壊します。"]
+];
+let hsel=ISO.findIndex(a=>a[0]=="C"&&a[1]==14);
+const RK=Array.from({length:200},(_,i)=>i).sort(()=>Math.random()-.5);
+function isoLine(s){const a=ISO.filter(i=>i[0]==s);if(!a.length)return"";return `<p>同位体: ${a.map(i=>sup(i[1])+s+(i[2]?"("+fmt(i[2])+")":"")).join("・")}</p>${a.some(i=>i[2])?`<button class="chip" style="--h:155" data-i="${s}">半減期を見る</button> `:""}`}
+function hl(){const I=ISO[hsel],nm=(EL.find(x=>x.sym==I[0])||{}).name||"";
+ const rows=ISO.map((a,i)=>[a,i]).filter(([a])=>a[2]&&hit(a[0],a[1],a[4],(EL.find(x=>x.sym==a[0])||{}).name)).sort((x,y)=>x[0][2]-y[0][2]).map(([a,i])=>`<button class="hr" data-h="${i}" aria-pressed="${i==hsel}"><b>${sup(a[1])}${a[0]}</b><span class="hb"><i style="width:${Math.max(2,(Math.log10(a[2])+4)/31*100)}%;background:${a[3]=="α"?"#e0574f":"#3b82e0"}"></i></span><span class="ht">${fmt(a[2])}</span></button>`).join("");
+ return `<div class="item" style="margin-bottom:12px"><h3>${sup(I[1])}${I[0]}(${nm})</h3><p class="meta">半減期 ${fmt(I[2])}・${MODE[I[3]]}</p><p>${I[4]}</p><input type="range" id="hs" min="0" max="8" step="0.5" value="0" aria-label="経過した半減期の回数"><canvas id="dc" width="400" height="60"></canvas><p id="hn" class="meta"></p><button class="chip" style="--h:155" data-p="1">再生</button></div><p class="meta">赤: α崩壊 / 青: β崩壊・電子捕獲など(バーの長さは半減期の対数。10⁻⁴秒〜10²⁷秒)</p>${rows||`<p class="empty">一致する同位体がありません。</p>`}`}
+function hlUpdate(){const s=$("hs");if(!s)return;const n=+s.value,I=ISO[hsel],c=$("dc").getContext("2d"),d=Math.round(200*(1-.5**n));c.clearRect(0,0,400,60);RK.forEach((r,i)=>{c.fillStyle=r<d?"rgba(138,147,173,.35)":"#2f7bff";c.beginPath();c.arc(8+(i%40)*10,8+Math.floor(i/40)*10,3.5,0,6.3);c.fill()});$("hn").textContent=(n?n+"回分("+fmt(I[2]*n)+")経過":"開始時")+" → 未崩壊 "+(100*.5**n).toFixed(n<4?1:3)+"%"}
+function hlPlay(){cancelAnimationFrame(raf2);const s=$("hs");if(matchMedia("(prefers-reduced-motion:reduce)").matches){s.value=4;hlUpdate();return}s.value=0;const step=()=>{s.value=+s.value+.04;hlUpdate();if(+s.value<8)raf2=requestAnimationFrame(step)};step()}
+document.addEventListener("input",ev=>{if(ev.target.id=="hs")hlUpdate()});
+const rgb=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+const mix=(a,b,k)=>{const x=rgb(a),y=rgb(b);return"rgb("+x.map((v,i)=>Math.round(v+(y[i]-v)*k)).join()+")"};
+function stopLab(){cancelAnimationFrame(raf);cancelAnimationFrame(raf2)}
+function lab(){const e=EX[cur];
+ const chips=EX.map((a,i)=>[a,i]).filter(([a])=>hit(a.k,a.t)).map(([a,i])=>`<button class="chip" style="--h:215" aria-pressed="${i==cur}" data-e="${i}">${a.k} ${a.t}</button>`).join("");
+ return `<div class="lab"><div class="legend">${chips}</div><canvas id="cv" width="640" height="320" role="img" aria-label="${e.t}のアニメーション"></canvas><div class="item" style="margin-top:12px"><h3>${e.k}｜${e.t}</h3><div class="eq">${e.eq}</div><p>${e.tx}</p><p><button class="chip" style="--h:215" data-r="1">もう一度見る</button></p></div></div>`}
+function labInit(){stopLab();const cv=$("cv");if(!cv)return;const g=cv.getContext("2d"),e=EX[cur],R=Math.random;
+ const sx=320,top=100,bot=290,L=235,Rt=405,sf=160;let t=0,P=[],C=[];
+ const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+ const add=o=>P.push(Object.assign({l:0,vx:0,vy:0},o));
+ function frame(){t++;const k=Math.min(t/300,1),on=k<.9;
+  g.globalCompositeOperation="source-over";g.globalAlpha=1;g.fillStyle="#0f1830";g.fillRect(0,0,640,320);
+  const s0=e.sz||16,s=s0*(1-(e.sh||0)*k);let px=sx,py=e.ls?sf-3:215;
+  if(e.ls){if(e.sink)py=sf+(bot-28-sf)*Math.min(k*4,1);else if(e.mv)px=sx+Math.sin(t*.06)*50*e.mv*(on?1:0)}
+  if(e.gl){const gi=k<.85?Math.min(k*5,1):(1-k)/.15;const gr=g.createRadialGradient(px,py,0,px,py,170);gr.addColorStop(0,e.gl);gr.addColorStop(1,"rgba(0,0,0,0)");g.globalAlpha=Math.max(gi,0)*(e.sp?.55:.35);g.fillStyle=gr;g.fillRect(0,0,640,320);g.globalAlpha=1}
+  if(e.ls){g.fillStyle=mix(e.ls[0],e.ls[1],k);g.globalAlpha=.6;g.fillRect(L+1,sf,Rt-L-2,bot-sf-1);g.globalAlpha=1;g.strokeStyle="rgba(255,255,255,.65)";g.lineWidth=3;g.beginPath();g.moveTo(L,top);g.lineTo(L,bot-12);g.quadraticCurveTo(L,bot,L+12,bot);g.lineTo(Rt-12,bot);g.quadraticCurveTo(Rt,bot,Rt,bot-12);g.lineTo(Rt,top);g.stroke()}
+  if(e.pp){const ph=Math.min(k*36,24);g.globalAlpha=.95;g.fillStyle=e.pp;g.fillRect(L+2,bot-ph,Rt-L-4,ph);g.globalAlpha=1}
+  if(!e.ls&&e.pc){g.strokeStyle="#6b7691";g.lineWidth=4;g.beginPath();g.moveTo(px,py+s*.7);g.lineTo(px,310);g.stroke()}
+  if(e.rod){g.fillStyle=e.pc;g.fillRect(sx-4,top-10,8,bot-30-top+10)}else if(e.pc&&s>1){g.fillStyle=e.pc;g.beginPath();g.ellipse(px,py,s,s*.7,0,0,7);g.fill()}
+  if(e.cr){if(on&&R()<.5&&C.length<400)C.push({x:sx+(R()-.5)*50,y:sf+R()*(bot-sf-30),a:R()*6.3,l:0});g.strokeStyle=e.cr;g.lineWidth=1.5;for(const c of C){c.l=Math.min(c.l+.3,16);g.beginPath();g.moveTo(c.x,c.y);g.lineTo(c.x+Math.cos(c.a)*c.l,c.y+Math.sin(c.a)*c.l);g.stroke()}}
+  if(e.pop){g.strokeStyle="rgba(255,255,255,.65)";g.lineWidth=3;g.strokeRect(sx-24,130,48,160);const d=t-90;
+   if(d<0){g.fillStyle="#7ec8ff";for(let i=0;i<8;i++)g.fillRect(sx-18+((t*(1+i*.3)+i*17)%36),150+(i*17+t*.7*((i%3)+1))%120,3,3)}
+   if(d==0)for(let i=0;i<50;i++)add({ty:"s",x:sx,y:210,vx:(R()-.5)*9,vy:-R()*7,m:40,r:1.8,c:"#bfe3ff"});
+   if(d>=0&&d<40){g.globalCompositeOperation="lighter";const gr=g.createRadialGradient(sx,210,0,sx,210,20+d*8);gr.addColorStop(0,"#ffffff");gr.addColorStop(1,"rgba(0,0,0,0)");g.globalAlpha=1-d/40;g.fillStyle=gr;g.fillRect(0,0,640,320);g.globalAlpha=1;g.globalCompositeOperation="source-over";g.font="700 44px sans-serif";g.fillStyle="#fff";g.textAlign="center";g.fillText("ポン!",sx,90)}}
+  if(on){
+   if(e.fl)for(let i=0;i<3;i++)add({ty:"f",x:px+(R()-.5)*8,y:py,vx:(R()-.5)*.8,vy:-1.2-R()*1.5*e.fl[1],m:28,r:(7+R()*5)*e.fl[1],c:e.fl[0]});
+   if(e.bub)for(let i=0;i<2;i++)if(R()<e.bub)add({ty:"b",x:px+(R()-.5)*16,y:py,vx:(R()-.5)*.4,vy:-.8-R(),m:200,r:2+R()*3});
+   if(e.sp)for(let i=0;i<e.sp[1]*2;i++)add({ty:"s",x:px,y:py,vx:(R()-.5)*7,vy:-R()*6-1,m:45,r:1.6,c:e.sp[0]});
+   if(e.pp&&R()<.6)add({ty:"p",x:L+10+R()*(Rt-L-20),y:sf+2,vy:.6+R()*.6,m:300,r:2,c:e.pp})}
+  g.globalCompositeOperation="lighter";
+  P=P.filter(p=>{p.l++;p.x+=p.vx;p.y+=p.vy;if(p.ty=="s")p.vy+=.18;if(p.ty=="f")p.r*=.96;
+   if((p.ty=="b"&&p.y<sf-4)||p.l>p.m||(p.ty=="p"&&p.y>bot-8))return false;
+   g.globalAlpha=Math.max(1-p.l/p.m,0)*(p.ty=="f"?.55:1);
+   if(p.ty=="b"){g.strokeStyle="#cfe9ff";g.lineWidth=1.2;g.beginPath();g.arc(p.x,p.y,p.r,0,6.3);g.stroke()}
+   else{g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y,p.r,0,6.3);g.fill()}
+   return true});
+  g.globalAlpha=1;g.globalCompositeOperation="source-over";
+  if(t<360&&!still)raf=requestAnimationFrame(frame)}
+ if(still)t=220;
+ frame()}
+const QUIZ=[
+ {q:"水の化学式は？",a:["H₂O","CO₂","O₂","NaCl"],c:0,why:"水は水素2個と酸素1個からなる分子です。"},
+ {q:"原子番号26の元素は？",a:["銅","鉄","銀","亜鉛"],c:1,why:"鉄（Fe）の原子番号は26です。"},
+ {q:"空気中で最も多い気体は？",a:["酸素","二酸化炭素","窒素","アルゴン"],c:2,why:"窒素は空気の約78%を占めます。"},
+ {q:"中性の水溶液のpHはおよそ？",a:["1","7","10","14"],c:1,why:"25℃では中性の水溶液のpHは約7です。"},
+ {q:"食塩の化学式は？",a:["HCl","KCl","NaCl","NaOH"],c:2,why:"食塩の主成分は塩化ナトリウム（NaCl）です。"},
+ {q:"炭素の元素記号は？",a:["Ca","C","Co","Cu"],c:1,why:"炭素の元素記号はCです。"},
+ {q:"半減期を1回経過すると未崩壊の原子核は？",a:["0%","25%","50%","75%"],c:2,why:"半減期ごとに未崩壊の原子核は半分になります。"},
+ {q:"酸と塩基の中和で一般に生じるものは？",a:["塩と水","酸素だけ","水素だけ","炭素"],c:0,why:"代表的な中和反応では塩と水が生じます。"}
+];
+function quiz(){const x=QUIZ[quizIndex%QUIZ.length];return `<section class="item"><div class="quiz-head"><h2>学習クイズ</h2><span class="meta">${quizIndex+1} / ${QUIZ.length} 問・正解 ${quizScore}</span></div><h3>${x.q}</h3><div class="quiz-options">${x.a.map((a,i)=>`<button class="quiz-option ${quizAnswered?(i===x.c?"correct":i===quizChoice?"wrong":""):""}" data-answer="${i}" ${quizAnswered?"disabled":""}>${i+1}. ${a}</button>`).join("")}</div>${quizAnswered?`<p><strong>${quizChoice===x.c?"正解！":"惜しい！"}</strong> ${x.why}</p><button class="utility" data-next="1">${quizIndex===QUIZ.length-1?"結果を見る":"次の問題へ →"}</button>`:"<p class=meta>選択肢を選んで回答してください。</p>"}</section>`}
+function quizResult(){return `<section class="item"><h2>クイズ結果</h2><p style="font-size:2rem"><strong>${quizScore} / ${QUIZ.length}</strong> 正解</p><p>繰り返し挑戦して、化学の知識を定着させましょう。</p><button class="utility" data-restart="1">もう一度挑戦</button></section>`}
+function view(){
+ if(tab=="quiz")return quizIndex>=QUIZ.length?quizResult():quiz();
+ if(tab=="lab")return lab();
+ if(tab=="hl")return hl();
+ if(tab=="pt")return pt();
+ if(tab=="rx")return list(RX,a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`,q);
+ if(tab=="rs")return list(RS,a=>`<article class="item"><h3>${a[0]}</h3><p class="meta">${a[1]}・${a[2]}</p><p>${a[3]}</p></article>`,q);
+ return list(GL,a=>`<article class="item"><h3>${a[0]}</h3><p>${a[1]}</p></article>`,q)}
+function draw(){stopLab();tabs();$("main").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate()}
+document.addEventListener("click",ev=>{const t=ev.target.closest("[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");if(!t)return;
+ if(t.dataset.r){labInit();return}
+ if(t.dataset.h!==undefined){hsel=+t.dataset.h;draw();return}
+ if(t.dataset.i){const j=ISO.findIndex(a=>a[0]==t.dataset.i&&a[2]);if(j>=0){hsel=j;tab="hl";draw();scrollTo(0,0)}return}
+ if(t.dataset.p){hlPlay();return}
+ if(t.dataset.x){const i=EX.findIndex(a=>a.k==t.dataset.x);if(i>=0){cur=i;tab="lab";draw();scrollTo(0,0)}return}
+ if(t.dataset.e!==undefined){cur=+t.dataset.e;draw();return}
+ if(t.dataset.t){tab=t.dataset.t}
+ else if(t.dataset.z){sel=+t.dataset.z}
+ else filt=filt==t.dataset.c?null:t.dataset.c;
+ draw()});
+$("q").addEventListener("input",ev=>{q=ev.target.value.trim().toLowerCase();draw()});
+const themeButton=$("themeToggle");
+function themeLabel(){themeButton.textContent=document.documentElement.dataset.theme==="dark"?"☀ ライトモード":"☾ ダークモード"}
+const storedTheme=localStorage.getItem("chemistry-theme");if(storedTheme)document.documentElement.dataset.theme=storedTheme;
+themeButton.addEventListener("click",()=>{const dark=document.documentElement.dataset.theme==="dark"||(document.documentElement.dataset.theme!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.dataset.theme=dark?"light":"dark";localStorage.setItem("chemistry-theme",document.documentElement.dataset.theme);themeLabel()});
+themeLabel();draw();
+</script>
+</body>
+</html>
