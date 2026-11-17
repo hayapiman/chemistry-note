@@ -283,6 +283,45 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var
 @media(max-width:760px){.home-atom{right:-120px;opacity:.22}.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-hero{min-height:290px}.home-hero-copy{max-width:100%}.home-bottom{align-items:flex-start;flex-direction:column}.home-section-heading p{display:none}}
 @media(max-width:480px){.home-page{gap:19px}.home-hero{padding:24px 20px;border-radius:19px}.home-hero h2{font-size:1.8rem}.home-hero p{font-size:.9rem}.home-grid{gap:9px}.home-feature{min-height:168px;padding:14px}.home-feature-icon{width:39px;height:39px;font-size:1.4rem}.home-feature strong{font-size:.95rem}.home-feature-desc{font-size:.75rem}.home-feature-arrow{top:15px;right:12px}.home-stats{padding:15px 4px}.home-stats span{font-size:.69rem}.home-section-heading h2{font-size:1.25rem}.home-bottom{padding:20px}.compact-header{padding:10px 12px}}
 @media(prefers-reduced-motion:reduce){.home-feature{transition:none}}
+
+/* Refined virtual laboratory */
+.lab-page{display:grid;gap:18px;max-width:1080px;margin:auto}
+.lab-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:16px 4px}
+.lab-eyebrow{font-size:.72rem;letter-spacing:.14em;font-weight:800;color:var(--accent)}
+.lab-heading h2{font-size:clamp(1.65rem,3vw,2.2rem);letter-spacing:-.04em;line-height:1.3;margin:6px 0}
+.lab-heading p{color:var(--sub);margin:0;font-size:.92rem}
+.lab-count{color:var(--sub);font-size:.82rem;white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+.lab-filters,.lab-workspace,.lab-explanation{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--soft-shadow)}
+.lab-filter-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.lab-filter-title span{font-size:.8rem;color:var(--sub)}
+.lab-categories{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}
+.lab-categories button{font:inherit;font-size:.84rem;border-radius:999px;border:1px solid var(--line);padding:8px 13px;background:var(--bg);color:var(--ink);cursor:pointer}
+.lab-categories button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:white}
+.lab-experiments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-height:290px;overflow-y:auto;overscroll-behavior:contain;padding:2px}
+.lab-experiment{display:flex;align-items:center;gap:10px;text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:13px;padding:10px;min-width:0;cursor:pointer;font:inherit}
+.lab-experiment[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--panel)}
+.lab-experiment-symbol{flex-shrink:0;min-width:42px;max-width:56px;min-height:42px;padding:5px;display:grid;place-items:center;background:var(--panel);border-radius:10px;color:var(--accent);font-size:.85rem;font-weight:800;overflow-wrap:anywhere}
+.lab-experiment-copy{min-width:0;display:flex;flex-direction:column}
+.lab-experiment-copy strong{font-size:.84rem;line-height:1.45}
+.lab-experiment-copy small{font-size:.7rem;color:var(--sub)}
+.lab-experiment-arrow{margin-left:auto;font-size:1.25rem;color:var(--sub)}
+.lab-workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.lab-workspace-heading h3{font-size:1.25rem;line-height:1.35;margin:4px 0 0}
+.lab-type{border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--sub);font-size:.76rem;white-space:nowrap}
+.lab-stage{position:relative;background:#0f1830;border-radius:15px;overflow:hidden;aspect-ratio:2/1;display:grid;place-items:center}
+.lab-stage canvas{display:block;width:100%;height:100%;object-fit:contain;max-width:100%}
+.lab-stage-label{position:absolute;top:12px;left:12px;color:#b9c7e6;font-size:.63rem;letter-spacing:.11em;background:rgba(11,19,39,.7);border-radius:6px;padding:5px 8px;pointer-events:none}
+.lab-controls{display:flex;align-items:center;gap:15px;margin-top:14px;flex-wrap:wrap}
+.lab-replay{border:0;background:var(--accent);color:white;border-radius:11px;padding:11px 18px;min-height:44px;font:inherit;font-weight:700;cursor:pointer}
+.lab-control-hint{font-size:.8rem;color:var(--sub)}
+.lab-explanation-head h3{margin:3px 0 16px;font-size:1.3rem}
+.lab-equation-label{font-size:.76rem;color:var(--sub);margin-bottom:6px}
+.lab-equation{border-radius:12px;background:var(--bg);border:1px solid var(--line);padding:16px;font-weight:750;font-size:clamp(.98rem,2.3vw,1.25rem);overflow-x:auto;white-space:nowrap}
+.lab-explanation>p{line-height:1.9;margin:16px 0}
+.lab-safety{display:flex;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--sub);font-size:.8rem;line-height:1.7}
+.lab-safety>span:first-child{font-weight:800;color:var(--accent)}
+@media(max-width:800px){.lab-experiments{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.lab-page{gap:12px}.lab-heading{padding:9px 2px}.lab-heading h2{font-size:1.65rem}.lab-count{font-size:.72rem;padding:5px 8px}.lab-filters,.lab-workspace,.lab-explanation{padding:13px;border-radius:16px}.lab-experiments{grid-template-columns:1fr;max-height:210px}.lab-experiment{padding:8px}.lab-experiment-symbol{min-height:36px;min-width:38px}.lab-stage{border-radius:10px}.lab-stage-label{font-size:.55rem;top:7px;left:7px}.lab-workspace-heading h3{font-size:1.1rem}.lab-type{font-size:.67rem}.lab-control-hint{display:none}}
 </style>
 </head>
 <body>
@@ -509,9 +548,21 @@ document.addEventListener("input",ev=>{if(ev.target.id=="hs")hlUpdate()});
 const rgb=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
 const mix=(a,b,k)=>{const x=rgb(a),y=rgb(b);return"rgb("+x.map((v,i)=>Math.round(v+(y[i]-v)*k)).join()+")"};
 function stopLab(){cancelAnimationFrame(raf);cancelAnimationFrame(raf2)}
-function lab(){const e=EX[cur];
- const chips=EX.map((a,i)=>[a,i]).filter(([a])=>hit(a.k,a.t)).map(([a,i])=>`<button class="chip" style="--h:215" aria-pressed="${i==cur}" data-e="${i}">${a.k} ${a.t}</button>`).join("");
- return `<div class="lab"><div class="legend">${chips}</div><canvas id="cv" width="640" height="320" role="img" aria-label="${e.t}のアニメーション"></canvas><div class="item" style="margin-top:12px"><h3>${e.k}｜${e.t}</h3><div class="eq">${e.eq}</div><p>${e.tx}</p><p><button class="chip" style="--h:215" data-r="1">もう一度見る</button></p></div></div>`}
+
+let labCategory="すべて";
+const LAB_CATEGORIES=["すべて","水との反応","燃焼・発光","溶液・沈殿","炎色反応"];
+function labCategoryOf(e){if(e.t.includes("炎色反応"))return "炎色反応";if(e.t.includes("と水"))return "水との反応";if(e.ls||e.pp||e.cr)return "溶液・沈殿";return "燃焼・発光"}
+function lab(){
+ const e=EX[cur],group=labCategoryOf(e);
+ const available=EX.map((a,i)=>({a,i})).filter(({a})=>(labCategory==="すべて"||labCategoryOf(a)===labCategory)&&hit(a.k,a.t,a.eq,a.tx));
+ return '<section class="lab-page">'+
+ '<div class="lab-heading"><div><span class="lab-eyebrow">VIRTUAL CHEMISTRY LAB</span><h2>擬似実験室</h2><p>反応を選び、アニメーションで変化を観察しよう。</p></div><span class="lab-count">'+EX.length+'種類の実験</span></div>'+
+ '<div class="lab-filters"><div class="lab-filter-title"><strong>実験を探す</strong><span>'+available.length+'件</span></div><div class="lab-categories">'+LAB_CATEGORIES.map(c=>'<button type="button" data-lab-category="'+escapeHtml(c)+'" aria-pressed="'+(labCategory===c)+'">'+escapeHtml(c)+'</button>').join("")+'</div><div class="lab-experiments">'+available.map(({a,i})=>'<button type="button" data-e="'+i+'" class="lab-experiment" aria-pressed="'+(i===cur)+'"><span class="lab-experiment-symbol">'+escapeHtml(a.k)+'</span><span class="lab-experiment-copy"><strong>'+escapeHtml(a.t)+'</strong><small>'+escapeHtml(labCategoryOf(a))+'</small></span><span class="lab-experiment-arrow" aria-hidden="true">›</span></button>').join("")+'</div>'+(available.length?'':'<p class="empty">条件に一致する実験はありません。</p>')+'</div>'+
+ '<section class="lab-workspace"><div class="lab-workspace-heading"><div><span class="lab-eyebrow">NOW OBSERVING</span><h3>'+escapeHtml(e.t)+'</h3></div><span class="lab-type">'+escapeHtml(group)+'</span></div>'+
+ '<div class="lab-stage"><canvas id="cv" width="640" height="320" role="img" aria-label="'+escapeHtml(e.t)+'の模式的なアニメーション"></canvas><span class="lab-stage-label">SIMULATION · 模式表現</span></div>'+
+ '<div class="lab-controls"><button type="button" class="lab-replay" data-r="1">↻ もう一度再生</button><span class="lab-control-hint">実験の様子を繰り返し確認できます</span></div></section>'+
+ '<section class="lab-explanation"><div class="lab-explanation-head"><span class="lab-eyebrow">LEARN THE SCIENCE</span><h3>反応のしくみ</h3></div><div class="lab-equation-label">化学反応式・実験の表現</div><div class="lab-equation">'+escapeHtml(e.eq)+'</div><p>'+escapeHtml(e.tx)+'</p><div class="lab-safety"><span aria-hidden="true">ⓘ</span><span>これは学習用の模式アニメーションです。実際の反応の速度・色・規模を正確に再現したものではありません。危険な薬品や反応を自分で再現しないでください。</span></div></section></section>';
+}
 function labInit(){stopLab();const cv=$("cv");if(!cv)return;const g=cv.getContext("2d"),e=EX[cur],R=Math.random;
  const sx=320,top=100,bot=290,L=235,Rt=405,sf=160;let t=0,P=[],C=[];
  const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
@@ -738,8 +789,9 @@ function home(){
 
 function draw(){stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();$("q").placeholder=tab==="home"?"学びたいテーマを検索": "名前・記号・キーワードで検索";if(tab=="lab")labInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
 document.addEventListener("click",ev=>{
- const t=ev.target.closest("[data-timeline-era],[data-timeline-category],[data-timeline-order],[data-term-back],[data-note-add],[data-note-save],[data-note-delete],[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
+ const t=ev.target.closest("[data-lab-category],[data-timeline-era],[data-timeline-category],[data-timeline-order],[data-term-back],[data-note-add],[data-note-save],[data-note-delete],[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
  if(!t)return;
+ if(t.dataset.labCategory!==undefined){labCategory=t.dataset.labCategory;draw();return}
  if(t.dataset.timelineEra!==undefined){timelineEra=t.dataset.timelineEra;draw();return}
  if(t.dataset.timelineCategory!==undefined){timelineCategory=t.dataset.timelineCategory;draw();return}
  if(t.dataset.timelineOrder!==undefined){timelineOrder=timelineOrder==="asc"?"desc":"asc";draw();return}
