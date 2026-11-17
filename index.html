@@ -164,19 +164,45 @@ body[data-layout="mobile"] .atom-panel{padding:12px}
 .sticky-editor{padding:10px;margin-top:10px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px}
 .sticky-editor label{display:block;font-size:.83rem;font-weight:700}
 .sticky-editor textarea{font:inherit;display:block;width:100%;resize:vertical;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px}
+
+/* Compact top bar and left navigation drawer */
+.compact-header{max-width:1320px;padding:14px 18px;margin:0 auto 14px;background:var(--panel);border:1px solid var(--line);border-radius:0 0 20px 20px;box-shadow:var(--shadow)}
+.header-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.compact-header h1{font-size:clamp(1.2rem,3.8vw,1.8rem);margin:0;flex:1}
+.compact-header #q{display:block;width:100%;max-width:none;box-sizing:border-box;margin:0}
+.menu-toggle,.header-theme{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;min-width:44px;min-height:44px;font-size:1.4rem;cursor:pointer}
+.header-theme{font-size:1.15rem}
+.menu-backdrop{position:fixed;inset:0;background:rgba(8,16,32,.53);z-index:1000}
+.menu-backdrop[hidden]{display:none}
+.side-menu{position:fixed;inset:0 auto 0 0;width:min(86vw,330px);max-width:100%;background:var(--panel);color:var(--ink);z-index:1001;box-shadow:8px 0 36px rgba(0,0,0,.17);padding:20px 16px;box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-110%);transition:transform .22s ease;visibility:hidden}
+.menu-open .side-menu{transform:translateX(0);visibility:visible}
+body.menu-open{overflow:hidden}
+.side-menu-head{display:flex;align-items:center;justify-content:space-between;font-size:1.2rem;margin-bottom:20px}
+.side-menu-head button{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;width:42px;height:42px;cursor:pointer}
+.side-label{font-size:.76rem;color:var(--sub);font-weight:700;margin:14px 0 8px}
+.side-tabs{display:flex;flex-direction:column;gap:5px}
+.side-tabs button{display:block;width:100%;padding:12px 14px;text-align:left;border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.side-tabs button[aria-current=page]{background:var(--accent);color:#fff;font-weight:700}
+.side-settings{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.side-settings .mode-switch{display:flex;margin-top:10px}
+.side-settings .mode-switch button{font-size:.78rem;padding:7px 10px}
+body[data-layout="desktop"] .compact-header{min-width:0}
+@media(max-width:700px){.compact-header{padding:10px 12px;margin-bottom:10px}.compact-header #q{font-size:16px}.header-top{margin-bottom:8px}main{padding-top:0}}
+@media(prefers-reduced-motion:reduce){.side-menu{transition:none}}
 </style>
 </head>
 <body>
-<header>
-  <h1>化学ノート</h1>
-  <p class="lead">元素、反応、研究者、用語をひとつの画面でしらべられます。</p>
-  <div class="bar">
-    <button id="themeToggle" class="utility" type="button" aria-label="テーマ切替">☾ テーマ切替</button>
-    <div class="tabs" role="tablist" id="tabs"></div>
-    <input type="search" id="q" placeholder="名前・記号・キーワードで検索" aria-label="検索">
-  </div>
+<header class="compact-header">
+  <div class="header-top"><button id="menuToggle" class="menu-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="sideMenu"><span>☰</span></button><h1>化学ノート</h1><button id="themeQuick" class="header-theme" type="button" aria-label="ダークモード切替">☾</button></div>
+  <input type="search" id="q" placeholder="名前・記号・キーワードで検索" aria-label="検索">
 </header>
-<main id="main"><div id="layoutControls" class="mode-switch" role="group" aria-label="表示レイアウト"></div><div id="content"></div></main>
+<div id="menuBackdrop" class="menu-backdrop" hidden></div>
+<aside id="sideMenu" class="side-menu" aria-label="メインメニュー" aria-hidden="true" inert>
+ <div class="side-menu-head"><strong>メニュー</strong><button id="menuClose" type="button" aria-label="メニューを閉じる">✕</button></div>
+ <p class="side-label">学習コンテンツ</p><nav id="tabs" class="side-tabs" aria-label="コンテンツ切替"></nav>
+ <div class="side-settings"><p class="side-label">設定</p><button id="themeToggle" class="utility" type="button">☾ ダークモード</button><div id="layoutControls" class="mode-switch" role="group" aria-label="表示レイアウト"></div></div>
+</aside>
+<main id="main"><div id="content"></div></main>
 <footer>原子量は概数です。()内の数値は最も安定な同位体の質量数です。</footer>
 <script>
 const CATS={alkali:["アルカリ金属",355],alkaline:["アルカリ土類金属",25],trans:["遷移金属",48],post:["その他の金属",185],metalloid:["半金属",160],nonmetal:["非金属",120],halogen:["ハロゲン",215],noble:["貴ガス",270],lanth:["ランタノイド",300],actin:["アクチノイド",330]};
@@ -292,7 +318,7 @@ let quizIndex=0,quizScore=0,quizAnswered=false,quizChoice=-1;
 let favorites=new Set(JSON.parse(localStorage.getItem("chemistry-favorites")||"[]"));
 const $=id=>document.getElementById(id);
 const hit=(...a)=>!q||a.join(" ").toLowerCase().includes(q);
-function tabs(){$("tabs").innerHTML=TABS.map(([k,n])=>`<button role="tab" aria-selected="${k==tab}" data-t="${k}">${n}</button>`).join("")}
+function tabs(){$("tabs").innerHTML=TABS.map(([k,n])=>`<button type="button" aria-current="${k===tab?'page':'false'}" data-t="${k}">${n}</button>`).join("")}
 function pt(){
  const e=EL[sel-1],c=catOf(sel),[r,col]=place(sel);
  const legend=Object.entries(CATS).map(([k,[n,h]])=>`<button class="chip" style="--h:${h}" aria-pressed="${filt==k}" data-c="${k}">${n}</button>`).join("");
@@ -577,16 +603,48 @@ document.addEventListener("click",ev=>{
  if(t.dataset.p!==undefined){hlPlay();return}
  if(t.dataset.x){const i=EX.findIndex(a=>a.k==t.dataset.x);if(i>=0){cur=i;tab="lab";draw();scrollTo(0,0)}return}
  if(t.dataset.e!==undefined){cur=+t.dataset.e;draw();return}
- if(t.dataset.t){tab=t.dataset.t;focusItem=null;termFocus=null}
+ if(t.dataset.t){tab=t.dataset.t;focusItem=null;termFocus=null;closeMenu()}
  else if(t.dataset.z){sel=+t.dataset.z;atomTime=0}
  else if(t.dataset.c!==undefined){filt=filt===t.dataset.c?null:t.dataset.c}
  draw();
 });
 $("q").addEventListener("input",ev=>{q=ev.target.value.trim().toLowerCase();draw()});
 const themeButton=$("themeToggle");
-function themeLabel(){themeButton.textContent=document.documentElement.dataset.theme==="dark"?"☀ ライトモード":"☾ ダークモード"}
+function themeLabel(){const dark=document.documentElement.dataset.theme==="dark";themeButton.textContent=dark?"☀ ライトモード":"☾ ダークモード";$("themeQuick").textContent=dark?"☀":"☾"}
 const storedTheme=localStorage.getItem("chemistry-theme");if(storedTheme)document.documentElement.dataset.theme=storedTheme;
-themeButton.addEventListener("click",()=>{const dark=document.documentElement.dataset.theme==="dark"||(document.documentElement.dataset.theme!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.dataset.theme=dark?"light":"dark";localStorage.setItem("chemistry-theme",document.documentElement.dataset.theme);themeLabel()});
+function toggleTheme(){const dark=document.documentElement.dataset.theme==="dark"||(document.documentElement.dataset.theme!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.dataset.theme=dark?"light":"dark";localStorage.setItem("chemistry-theme",document.documentElement.dataset.theme);themeLabel()}
+themeButton.addEventListener("click",toggleTheme);
+$("themeQuick").addEventListener("click",toggleTheme);
+
+let menuOpen=false,menuPreviousFocus=null;
+function openMenu(){
+ if(menuOpen)return;menuOpen=true;menuPreviousFocus=document.activeElement;
+ $("sideMenu").inert=false;$("sideMenu").setAttribute("aria-hidden","false");
+ $("menuBackdrop").hidden=false;document.body.classList.add("menu-open");
+ $("menuToggle").setAttribute("aria-expanded","true");$("menuToggle").setAttribute("aria-label","メニューを閉じる");
+ $("menuClose").focus();
+}
+function closeMenu(){
+ if(!menuOpen)return;menuOpen=false;document.body.classList.remove("menu-open");
+ $("sideMenu").setAttribute("aria-hidden","true");$("sideMenu").inert=true;
+ $("menuBackdrop").hidden=true;$("menuToggle").setAttribute("aria-expanded","false");
+ $("menuToggle").setAttribute("aria-label","メニューを開く");
+ if(menuPreviousFocus&&menuPreviousFocus.isConnected)menuPreviousFocus.focus();
+}
+$("menuToggle").addEventListener("click",()=>menuOpen?closeMenu():openMenu());
+$("menuClose").addEventListener("click",closeMenu);
+$("menuBackdrop").addEventListener("click",closeMenu);
+document.addEventListener("keydown",ev=>{
+ if(ev.key==="Escape"&&menuOpen){closeMenu();return}
+ if(ev.key==="Tab"&&menuOpen){
+  const items=[...$("sideMenu").querySelectorAll('button:not([disabled]),a[href],input:not([disabled])')];
+  if(!items.length)return;
+  const first=items[0],last=items[items.length-1];
+  if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus()}
+  else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus()}
+ }
+});
+
 themeLabel();applyLayout();draw();
 </script>
 </body>
