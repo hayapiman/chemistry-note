@@ -527,7 +527,7 @@ function glossary(){
  const matches=all.filter(t=>(termCategory==="all"||t.category===termCategory)&&hit(t.name,t.desc,t.category));
  return '<section class="glossary-head"><div><p class="meta">CHEMISTRY GLOSSARY</p><h2>化学用語辞典 <small>'+all.length+'語</small></h2><p>分野別に探して、関連する元素・反応・研究者へ移動できます。</p></div></section>'+
  '<div class="term-categories" role="group" aria-label="用語カテゴリ">'+groups.map(c=>'<button type="button" data-term-cat="'+escapeHtml(c)+'" aria-pressed="'+(termCategory===c)+'">'+(c==="all"?"すべて":escapeHtml(c))+' <small>'+ (c==="all"?all.length:all.filter(t=>t.category===c).length)+'</small></button>').join("")+'</div>'+
- '<p class="meta">'+matches.length+'件の用語</p><div class="term-grid">'+matches.map(t=>'<article class="item term-card"><span class="term-category-label">'+escapeHtml(t.category)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><button class="term-detail-button" data-term-open="'+escapeHtml(t.name)+'">関連情報を見る →</button>'+(termSelected===t.name?'<div class="term-related"><h4>関連する内容</h4>'+termRelations(t)+'</div>':"")+'</article>').join("")+'</div>';
+ '<p class="meta">'+matches.length+'件の用語</p><div class="term-grid">'+matches.map(t=>'<article class="item term-card"><span class="term-category-label">'+escapeHtml(t.category)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p>'+stickyButton(t.name)+(stickyEditing===t.name?stickyEditor(t.name):'')+'<button class="term-detail-button" data-term-open="'+escapeHtml(t.name)+'">関連情報を見る →</button>'+(termSelected===t.name?'<div class="term-related"><h4>関連する内容</h4>'+termRelations(t)+'</div>':"")+'</article>').join("")+'</div>';
 }
 function focusedList(arr,kind,fn){
  const found=focusItem&&focusItem.kind===kind;
