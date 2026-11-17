@@ -205,7 +205,7 @@ body[data-layout="desktop"] .compact-header{min-width:0}
 .entry-details>summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:5px}
 .researcher-card .entry-body .meta{margin-bottom:8px}
 @media(prefers-reduced-motion:reduce){.entry-chevron{transition:none}}
-</style>
+.researcher-relations{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.researcher-relations h4{margin:0 0 10px}.glossary-head{padding:14px 18px}.glossary-head h2{margin:0}</style>
 </head>
 <body>
 <header class="compact-header">
@@ -540,7 +540,7 @@ function termRelations(t){
  let html="";
  const entries=[["terms","用語","term"],["elements","元素","element"],["people","研究者","person"],["reactions","反応","reaction"]];
  for(const [key,label,kind] of entries){
-  const names=(t[key]||[]).filter(n=>kind==="term"?termData().some(x=>x.name===n):kind==="element"?EL.some(x=>x.sym===n):kind==="person"?RS.some(x=>x[0]===n):RX.some(x=>x[0]===n));
+  const names=(t[key]||[]).filter(n=>kind==="term"?termData().some(x=>x.name===n):kind==="element"?EL.some(x=>x.sym===n):kind==="person"?researcherRows().some(x=>x[0]===n):RX.some(x=>x[0]===n));
   if(names.length)html+='<div class="related-group"><strong>'+label+'</strong><div class="related-items">'+names.map(n=>linkButton(kind,n,kind==="element"?(EL.find(e=>e.sym===n)?.name+" ("+n+")"):n)).join("")+'</div></div>';
  }
  return html||'<p class="meta">関連項目は順次追加予定です。</p>';
@@ -567,10 +567,19 @@ function glossary(){
  const all=termData();
  const groups=['all',...TERM_CATEGORIES];
  const matches=all.filter(t=>termFocus?t.name===termFocus:(termCategory==="all"||t.category===termCategory)&&hit(t.name,t.desc,t.category));
- return '<section class="glossary-head"><div><p class="meta">CHEMISTRY GLOSSARY</p><h2>化学用語辞典 <small>'+all.length+'語</small></h2><p>分野別に探して、関連する元素・反応・研究者へ移動できます。</p></div></section>'+
+ return '<section class="glossary-head"><div><h2>化学用語辞典 <small>'+all.length+'語</small></h2></div></section>'+
  '<div class="term-categories" role="group" aria-label="用語カテゴリ">'+groups.map(c=>'<button type="button" data-term-cat="'+escapeHtml(c)+'" aria-pressed="'+(termCategory===c)+'">'+(c==="all"?"すべて":escapeHtml(c))+' <small>'+ (c==="all"?all.length:all.filter(t=>t.category===c).length)+'</small></button>').join("")+'</div>'+
  (termFocus?'<div class="focus-header"><button class="utility" data-term-back="1">← 用語一覧に戻る</button></div>':'')+'<p class="meta">'+matches.length+'件の用語</p><div class="term-grid">'+matches.map(t=>'<article class="item term-card"><details class="entry-details" '+(termSelected===t.name?'open':'')+'><summary><span class="term-category-label">'+escapeHtml(t.category)+'</span><strong>'+escapeHtml(t.name)+'</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p>'+escapeHtml(t.desc)+'</p><div class="term-related"><h4>関連する内容</h4>'+termRelations(t)+'</div>'+stickyButton(t.name)+(stickyEditing===t.name?stickyEditor(t.name):'')+'</div></details></article>').join("")+'</div>';
 }
+const RESEARCHER_MORE=[["ニュートン","1642–1727","イギリス","運動の法則と万有引力の法則を体系化し、光の分散も研究しました。",["原子","質量数"],[],[]],["ファラデー","1791–1867","イギリス","電磁誘導を発見し、電気分解の法則を確立しました。",["電気分解","ファラデーの法則"],["H","O"],["水の電気分解"]],["ゲイ＝リュサック","1778–1850","フランス","気体の反応体積の法則を見いだし、気体の性質を研究しました。",["理想気体","状態方程式"],[],[]],["プルースト","1754–1826","フランス","化合物の成分元素の質量比が一定であるという定比例の法則を確立しました。",["化合物","化学反応式"],[],[]],["カニッツァーロ","1826–1910","イタリア","アボガドロの考え方を用いて原子量と分子量の整理を進めました。",["モル","アボガドロ定数"],[],[]],["モーズリー","1887–1915","イギリス","特性X線を調べ、元素を原子番号によって順序付ける根拠を示しました。",["原子番号","周期律"],["Cu"],[]],["チャドウィック","1891–1974","イギリス","1932年に中性子を発見し、原子核構造の理解を進めました。",["中性子","原子核"],["He"],[]],["トムソン","1856–1940","イギリス","陰極線の研究から電子を発見し、原子模型を提案しました。",["電子","原子"],[],[]],["ミリカン","1868–1953","アメリカ","油滴実験により電子の電荷を精密に測定しました。",["電子"],[],[]],["シュレーディンガー","1887–1961","オーストリア","波動方程式を提案し、電子の量子力学的な記述に貢献しました。",["電子軌道","量子数"],["H"],[]],["ハイゼンベルク","1901–1976","ドイツ","行列力学を創始し、不確定性原理を提唱しました。",["電子軌道","量子数"],[],[]],["パウリ","1900–1958","オーストリア","電子の配置を説明する排他原理を提唱しました。",["パウリの排他原理","電子配置"],[],[]],["フント","1896–1997","ドイツ","原子の電子配置を考える際に用いられるフントの規則で知られます。",["フントの規則","電子配置"],[],[]],["ルイス","1875–1946","アメリカ","電子対による共有結合の考え方やルイス構造を発展させました。",["ルイス構造","共有電子対","共有結合"],["C"],[]],["ブレンステッド","1879–1947","デンマーク","酸をプロトン供与体、塩基をプロトン受容体として定義しました。",["酸と塩基","水素イオン"],["H"],["中和"]],["ルシャトリエ","1850–1936","フランス","化学平衡が条件変化にどう応答するかを示す原理をまとめました。",["ルシャトリエの原理","化学平衡"],[],["アンモニア合成"]],["オストワルト","1853–1932","ドイツ","反応速度や触媒作用を研究し、アンモニアから硝酸を製造する方法にも名を残します。",["触媒","反応速度"],["N"],["オストワルト法"]],["ネルンスト","1864–1941","ドイツ","電極電位と濃度の関係を表すネルンストの式を導きました。",["電極電位","標準電極電位"],["Zn","Cu"],["ダニエル電池"]],["ダニエル","1790–1845","イギリス","安定した電流を取り出せるダニエル電池を考案しました。",["電池","酸化と還元"],["Zn","Cu"],["ダニエル電池"]],["ソディ","1877–1956","イギリス","同位体の概念を発展させ、放射性崩壊の研究に貢献しました。",["同位体","放射性崩壊"],["U"],[]],["マイトナー","1878–1968","オーストリア・スウェーデン","核分裂現象の理論的解釈に重要な貢献をしました。",["核分裂","核反応"],["U"],[]],["ハーン","1879–1968","ドイツ","ウランに中性子を照射した際の生成物を研究し、核分裂発見につながる実験を行いました。",["核分裂","核反応"],["U"],[]],["ドロシー・ホジキン","1910–1994","イギリス","X線結晶構造解析によりペニシリンやビタミンB12などの構造を解明しました。",["分子","有機化合物"],["C","N"],[]],["キャリー・マリス","1944–2019","アメリカ","DNAを増幅するPCR法を開発しました。",["DNA","高分子"],["C"],[]],["グッドイナフ","1922–2023","アメリカ","リチウムイオン電池の正極材料開発に貢献しました。",["二次電池","電池"],["Li"],[]],["ウィッティンガム","1941–","イギリス・アメリカ","リチウムイオンを利用する充電池の初期研究に貢献しました。",["二次電池","電池"],["Li"],[]],["クリック","1916–2004","イギリス","ワトソンらとともにDNAの二重らせん構造モデルを提案しました。",["DNA","高分子"],["C","P"],[]],["ワトソン","1928–2025","アメリカ","クリックらとともにDNAの二重らせん構造モデルを提案しました。",["DNA","高分子"],["C","P"],[]]];
+const RESEARCHER_LINKS={"ラヴォアジエ":{"terms":["燃焼","酸化と還元"],"elements":["O"],"reactions":["燃焼(メタン)"]},"ドルトン":{"terms":["原子","原子番号"],"elements":["H"]},"メンデレーエフ":{"terms":["周期律","周期","族"],"elements":["Na","Cl"]},"マリー・キュリー":{"terms":["放射能","放射性同位体"],"elements":["Ra","Po"]},"フリッツ・ハーバー":{"terms":["触媒","化学平衡"],"elements":["N","H"],"reactions":["アンモニア合成"]},"ポーリング":{"terms":["電気陰性度","共有結合"],"elements":["F"]},"白川英樹":{"terms":["高分子","重合"],"elements":["C"]},"野依良治":{"terms":["異性体","有機化合物"]},"田中耕一":{"terms":["タンパク質","高分子"]},"鈴木章・根岸英一":{"terms":["触媒","有機化合物"],"elements":["Pd"]},"吉野彰":{"terms":["二次電池","電池"],"elements":["Li"]},"ボイル":{"terms":["理想気体","状態方程式"]},"アボガドロ":{"terms":["モル","アボガドロ定数"]},"ベルセリウス":{"terms":["原子番号","化合物"]},"アレニウス":{"terms":["酸と塩基","電離","アレニウス式"]},"ベクレル":{"terms":["放射能","放射線"],"elements":["U"]},"ラザフォード":{"terms":["原子核","陽子"],"elements":["Au"]},"ボーア":{"terms":["ボーア模型","電子配置"],"elements":["H"]},"福井謙一":{"terms":["電子軌道","反応速度"]},"下村脩":{"terms":["タンパク質"],"elements":["C"]},"森田浩介":{"terms":["原子番号","周期律"],"elements":["Nh"]},"北川進":{"terms":["錯体","配位結合"]}};
+function researcherRows(){return [...RS,...RESEARCHER_MORE.map(a=>a.slice(0,4))]}
+function researcherRelations(name){
+ const added=RESEARCHER_MORE.find(a=>a[0]===name);
+ const r=added?{terms:added[4],elements:added[5],reactions:added[6]}:(RESEARCHER_LINKS[name]||{});
+ return termRelations(r);
+}
+
 function focusedList(arr,kind,fn){
  const found=focusItem&&focusItem.kind===kind;
  const rows=found?arr.filter(a=>a[0]===focusItem.name):arr.filter(a=>hit(...a));
@@ -592,7 +601,7 @@ function view(){
  if(tab=="hl")return hl();
  if(tab=="pt")return pt();
  if(tab=="rx")return focusedList(RX,"reaction",a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`);
- if(tab=="rs")return focusedList(RS,"person",a=>`<article class="item researcher-card"><details class="entry-details" ${focusItem?.kind==="person"&&focusItem.name===a[0]?"open":""}><summary><strong>${escapeHtml(a[0])}</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p class="meta">${escapeHtml(a[1])}・${escapeHtml(a[2])}</p><p>${escapeHtml(a[3])}</p></div></details></article>`);
+ if(tab=="rs")return focusedList(researcherRows(),"person",a=>`<article class="item researcher-card"><details class="entry-details" ${focusItem?.kind==="person"&&focusItem.name===a[0]?"open":""}><summary><strong>${escapeHtml(a[0])}</strong><span class="entry-chevron" aria-hidden="true">⌄</span></summary><div class="entry-body"><p class="meta">${escapeHtml(a[1])}・${escapeHtml(a[2])}</p><p>${escapeHtml(a[3])}</p><div class="researcher-relations"><h4>関連する内容</h4>${researcherRelations(a[0])}</div></div></details></article>`);
  return glossary()}
 function draw(){stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
 document.addEventListener("click",ev=>{
