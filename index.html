@@ -721,7 +721,7 @@ const RESEARCHER_LINKS={"ラヴォアジエ":{"terms":["燃焼","酸化と還元
 function researcherRows(){return [...RS,...RESEARCHER_MORE.map(a=>a.slice(0,4)),...RESEARCHER_NEW.map(a=>a.slice(0,4))]}
 function researcherRelations(name){
  const added=RESEARCHER_MORE.find(a=>a[0]===name)||RESEARCHER_NEW.find(a=>a[0]===name);
- const r=added?{terms:added[4],elements:added[5],reactions:added[6]}:(RESEARCHER_LINKS[name]||{});
+ const r=added?(RESEARCHER_NEW.includes(added)?{terms:added[5],elements:added[6],reactions:[]}:{terms:added[4],elements:added[5],reactions:added[6]}):(RESEARCHER_LINKS[name]||{});
  return termRelations(r);
 }
 
