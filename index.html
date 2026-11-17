@@ -69,6 +69,63 @@ header{padding-top:30px}h1{font-size:clamp(2rem,4vw,2.8rem)}
 .quiz-option:disabled{cursor:default;opacity:.8}.quiz-option.correct{border:2px solid #19a76c}.quiz-option.wrong{border:2px solid #e25c66}
 .quiz-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
 @media(max-width:650px){header,main{padding-left:12px;padding-right:12px}.bar{align-items:stretch}.tabs{order:2;flex-basis:100%}.utility{order:0}input[type=search]{order:1}.quiz-options{grid-template-columns:1fr}.card{padding:8px}}
+
+/* Responsive workspace and atom explorer */
+:root{--radius:18px}
+header,main,footer{max-width:1320px}
+header{position:relative}
+.lead{max-width:700px}
+.bar{background:var(--panel);padding:12px;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.tabs{border-bottom:0;gap:5px}
+.tabs button{border-radius:10px;border-bottom:0;margin:0;padding:10px 13px}
+.tabs button[aria-selected=true]{background:var(--accent);color:#fff}
+#q{border-radius:12px}
+.mode-switch{display:flex;gap:5px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.mode-switch button{font:inherit;font-size:.84rem;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer}
+.mode-switch button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pt{min-width:790px;gap:4px}
+.el{min-height:48px}
+.el:focus-visible{z-index:5}
+.card{grid-column:3/13;grid-row:1/4;align-self:stretch}
+.atom-panel{margin:16px 0 22px;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.atom-layout{display:grid;grid-template-columns:minmax(250px,1fr) minmax(260px,1fr);gap:20px;align-items:center}
+.atom-stage{min-height:350px;border-radius:18px;background:radial-gradient(circle at 50% 45%,#1c3563,#0a142b 72%);display:grid;place-items:center;overflow:hidden}
+.atom-svg{display:block;width:min(100%,430px);height:auto}
+.atom-shell{fill:none;stroke:#7694c7;stroke-width:1.3;stroke-dasharray:3 4;opacity:.68}
+.atom-electron{fill:#6ee7ff;filter:drop-shadow(0 0 4px #5adfff)}
+.atom-proton{fill:#ff6f85}.atom-neutron{fill:#b8c4d7}
+.atom-center{fill:#192744;stroke:#b5c9f2;stroke-width:1.5}
+.atom-data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.atom-stat{background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:10px}
+.atom-stat b{display:block;font-size:1.35rem}
+.atom-stat span{font-size:.74rem;color:var(--sub)}
+.atom-notice{font-size:.83rem;color:var(--sub);line-height:1.6}
+.atom-controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.atom-controls button{font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:8px 12px;cursor:pointer}
+.atom-controls button[aria-pressed=true]{background:var(--accent);color:#fff}
+.atom-shell-list{font-weight:700;overflow-wrap:anywhere}
+body[data-layout="desktop"] header,body[data-layout="desktop"] main{min-width:790px}
+body[data-layout="desktop"]{overflow-x:auto}
+body[data-layout="mobile"] header,body[data-layout="mobile"] main{min-width:0}
+body[data-layout="mobile"] .bar{display:block}
+body[data-layout="mobile"] .tabs{overflow-x:auto;margin:8px 0}
+body[data-layout="mobile"] #q{width:100%;margin-top:8px}
+body[data-layout="mobile"] .atom-layout{grid-template-columns:1fr}
+body[data-layout="mobile"] .atom-stage{min-height:260px}
+body[data-layout="mobile"] .atom-panel{padding:12px}
+@media(max-width:700px){
+ .atom-layout{grid-template-columns:1fr}
+ .atom-stage{min-height:260px}
+ .atom-panel{padding:12px}
+ .atom-data{gap:5px}
+ .atom-stat{padding:8px}
+ .bar{padding:9px}
+ .tabs button{padding:9px 11px;font-size:.85rem}
+ .card{gap:8px}
+ .card .sym{min-width:65px;font-size:2.8rem}
+}
+@media(prefers-reduced-motion:reduce){.atom-electron{transition:none}}
+
 </style>
 </head>
 <body>
@@ -81,7 +138,7 @@ header{padding-top:30px}h1{font-size:clamp(2rem,4vw,2.8rem)}
     <input type="search" id="q" placeholder="名前・記号・キーワードで検索" aria-label="検索">
   </div>
 </header>
-<main id="main"></main>
+<main id="main"><div id="layoutControls" class="mode-switch" role="group" aria-label="表示レイアウト"></div><div id="content"></div></main>
 <footer>原子量は概数です。()内の数値は最も安定な同位体の質量数です。</footer>
 <script>
 const CATS={alkali:["アルカリ金属",355],alkaline:["アルカリ土類金属",25],trans:["遷移金属",48],post:["その他の金属",185],metalloid:["半金属",160],nonmetal:["非金属",120],halogen:["ハロゲン",215],noble:["貴ガス",270],lanth:["ランタノイド",300],actin:["アクチノイド",330]};
@@ -205,7 +262,7 @@ function pt(){
   return `<button class="el${on?"":" dim"}" style="--h:${CATS[k][1]};grid-row:${rr};grid-column:${cc}" aria-pressed="${x.z==sel}" aria-label="${x.z} ${x.name}" data-z="${x.z}"><small>${x.z}</small><b>${x.sym}</b><i>${x.name}</i></button>`}).join("");
  const per=r>7?(r==9?6:7):r, grp=(r>7||(sel>=57&&sel<=71)||(sel>=89&&sel<=103))?"—":col;
  return `<div class="legend">${legend}</div><div class="scroll"><div class="pt">
- <div class="card" style="--h:${CATS[c][1]}"><div class="sym">${e.sym}</div><div><h2>${e.z}　${e.name}</h2><p>${CATS[c][0]}・第${per}周期・${grp==="—"?"f-ブロック":"第"+grp+"族"}・原子量 ${e.mass}</p><p>${F[e.z]||"周期表の位置から、似た性質の元素を見つけてみましょう。"}</p>${isoLine(e.sym)}<button class="utility" data-fav="${e.z}" aria-pressed="${favorites.has(e.z)}">${favorites.has(e.z)?"★ お気に入り登録済み":"☆ お気に入りに追加"}</button> ${EX.some(a=>a.k==e.sym)?`<button class="chip" style="--h:215" data-x="${e.sym}">この元素の実験を見る</button>`:""}</div></div>${cells}</div></div>`}
+ <div class="card" style="--h:${CATS[c][1]}"><div class="sym">${e.sym}</div><div><h2>${e.z}　${e.name}</h2><p>${CATS[c][0]}・第${per}周期・${grp==="—"?"f-ブロック":"第"+grp+"族"}・原子量 ${e.mass}</p><p>${F[e.z]||"周期表の位置から、似た性質の元素を見つけてみましょう。"}</p>${isoLine(e.sym)}<button class="utility" data-fav="${e.z}" aria-pressed="${favorites.has(e.z)}">${favorites.has(e.z)?"★ お気に入り登録済み":"☆ お気に入りに追加"}</button> ${EX.some(a=>a.k==e.sym)?`<button class="chip" style="--h:215" data-x="${e.sym}">この元素の実験を見る</button>`:""}</div></div>${cells}</div></div>${atomPanel(e)}`}
 function list(arr,fn,key){const h=arr.filter(a=>hit(...a)).map(fn).join("");return h?`<div class="list">${h}</div>`:`<p class="empty">「${key}」に一致する項目はありません。</p>`}
 const W="#6fa8dc";
 const EX=[
@@ -332,6 +389,62 @@ const QUIZ=[
 ];
 function quiz(){const x=QUIZ[quizIndex%QUIZ.length];return `<section class="item"><div class="quiz-head"><h2>学習クイズ</h2><span class="meta">${quizIndex+1} / ${QUIZ.length} 問・正解 ${quizScore}</span></div><h3>${x.q}</h3><div class="quiz-options">${x.a.map((a,i)=>`<button class="quiz-option ${quizAnswered?(i===x.c?"correct":i===quizChoice?"wrong":""):""}" data-answer="${i}" ${quizAnswered?"disabled":""}>${i+1}. ${a}</button>`).join("")}</div>${quizAnswered?`<p><strong>${quizChoice===x.c?"正解！":"惜しい！"}</strong> ${x.why}</p><button class="utility" data-next="1">${quizIndex===QUIZ.length-1?"結果を見る":"次の問題へ →"}</button>`:"<p class=meta>選択肢を選んで回答してください。</p>"}</section>`}
 function quizResult(){return `<section class="item"><h2>クイズ結果</h2><p style="font-size:2rem"><strong>${quizScore} / ${QUIZ.length}</strong> 正解</p><p>繰り返し挑戦して、化学の知識を定着させましょう。</p><button class="utility" data-restart="1">もう一度挑戦</button></section>`}
+
+let atomRunning=true,atomFrame=0,atomRaf=0,atomTime=0,atomLast=0;
+let layoutMode=localStorage.getItem("chemistry-layout")||"auto";
+function applyLayout(){
+ const mobile=layoutMode==="auto"?(window.innerWidth<760):layoutMode==="mobile";
+ document.body.dataset.layout=mobile?"mobile":"desktop";
+ const node=$("layoutControls");
+ node.innerHTML='<span class="meta">表示モード：</span>'+[["auto","自動"],["mobile","スマホ"],["desktop","PC"]].map(([k,n])=>'<button type="button" data-layout="'+k+'" aria-pressed="'+(layoutMode===k)+'">'+n+'</button>').join("");
+}
+window.addEventListener("resize",()=>{if(layoutMode==="auto")applyLayout()});
+const orbitalOrder=[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,6]];
+function shellCounts(z){
+ const shells=Array(7).fill(0);let remaining=z;
+ for(const [n,l,cap] of orbitalOrder){const count=Math.min(remaining,cap);shells[n-1]+=count;remaining-=count;if(!remaining)break}
+ return shells.filter((x,i)=>x||shells.slice(i+1).some(Boolean));
+}
+function massNumber(e){
+ const m=String(e.mass).match(/\d+(?:\.\d+)?/);
+ return m?Math.round(Number(m[0])):e.z;
+}
+function atomPanel(e){
+ const n=Math.max(0,massNumber(e)-e.z),shells=shellCounts(e.z);
+ return '<section class="atom-panel" aria-label="原子モデル"><div class="atom-layout"><div class="atom-stage"><svg id="atomSvg" class="atom-svg" viewBox="0 0 440 440" role="img" aria-label="'+e.name+'の原子模型"><g id="atomDrawing"></g></svg></div><div><p class="meta">ATOM EXPLORER · 概念モデル</p><h2>'+e.name+' <span class="meta">('+e.sym+')</span></h2><p>元素を選択すると、原子核と電子殻の模式図が切り替わります。</p><div class="atom-data"><div class="atom-stat"><b>'+e.z+'</b><span>陽子（赤）</span></div><div class="atom-stat"><b>'+n+'</b><span>中性子（灰）</span></div><div class="atom-stat"><b>'+e.z+'</b><span>電子（水色）</span></div></div><p class="atom-shell-list">電子殻の配置：'+shells.map((v,i)=>"KLMNOPQ"[i]+'殻 '+v).join(' / ')+'</p><div class="atom-controls"><button type="button" data-atom-toggle="1" id="atomToggle">'+(atomRunning?'⏸ 一時停止':'▶ 再生')+'</button><button type="button" data-atom-reset="1">↻ 最初から</button></div><p class="atom-notice">※ 中性子数は表示原子量を四捨五入した代表的な質量数から推定しています。電子は実際には決まった円軌道を回る粒ではなく、確率分布（軌道）で表されます。ここでは学習用に殻と回転を簡略化しています。電子殻の数は概略です。</p></div></div></section>';
+}
+function atomDraw(){
+ const target=$("atomDrawing");if(!target)return;
+ const e=EL[sel-1],shells=shellCounts(e.z),cx=220,cy=220;
+ const maxR=186,minR=shells.length>5?55:70,step=shells.length>1?(maxR-minR)/(shells.length-1):0;
+ let out='<circle class="atom-center" cx="220" cy="220" r="37"/>';
+ // The nucleus is a representative cluster, not a spatially accurate nucleon arrangement.
+ const protons=e.z,neutrons=Math.max(0,massNumber(e)-e.z),total=protons+neutrons;
+ const shown=Math.min(total,34);
+ for(let i=0;i<shown;i++){
+  const a=i*2.39996,r=5.2*Math.sqrt(i),x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
+  const proton=i%shown<Math.round(shown*protons/Math.max(1,total));
+  out+='<circle class="'+(proton?'atom-proton':'atom-neutron')+'" cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="5.1"/>';
+ }
+ shells.forEach((count,j)=>{
+  const radius=minR+j*step;
+  out+='<circle class="atom-shell" cx="220" cy="220" r="'+radius.toFixed(2)+'"/>';
+  for(let i=0;i<count;i++){
+   const angle=(i/count)*Math.PI*2+atomTime*(.55/(1+j*.18))*(j%2?-1:1);
+   out+='<circle class="atom-electron" cx="'+(cx+Math.cos(angle)*radius).toFixed(2)+'" cy="'+(cy+Math.sin(angle)*radius).toFixed(2)+'" r="'+(count>18?3:4.3)+'"/>';
+  }
+ });
+ target.innerHTML=out;
+}
+function atomStart(){
+ cancelAnimationFrame(atomRaf);atomLast=0;
+ if(tab!=="pt")return;
+ atomDraw();
+ if(!atomRunning||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const step=t=>{if(tab!=="pt"||!$("atomDrawing")||!atomRunning)return;if(atomLast)atomTime+=Math.min((t-atomLast)/1000,.05);atomLast=t;atomDraw();atomRaf=requestAnimationFrame(step)};
+ atomRaf=requestAnimationFrame(step);
+}
+
 function view(){
  if(tab=="quiz")return quizIndex>=QUIZ.length?quizResult():quiz();
  if(tab=="lab")return lab();
@@ -340,24 +453,34 @@ function view(){
  if(tab=="rx")return list(RX,a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`,q);
  if(tab=="rs")return list(RS,a=>`<article class="item"><h3>${a[0]}</h3><p class="meta">${a[1]}・${a[2]}</p><p>${a[3]}</p></article>`,q);
  return list(GL,a=>`<article class="item"><h3>${a[0]}</h3><p>${a[1]}</p></article>`,q)}
-function draw(){stopLab();tabs();$("main").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate()}
-document.addEventListener("click",ev=>{const t=ev.target.closest("[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");if(!t)return;
- if(t.dataset.r){labInit();return}
+function draw(){stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
+document.addEventListener("click",ev=>{
+ const t=ev.target.closest("[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
+ if(!t)return;
+ if(t.dataset.layout){layoutMode=t.dataset.layout;localStorage.setItem("chemistry-layout",layoutMode);applyLayout();return}
+ if(t.dataset.atomToggle!==undefined){atomRunning=!atomRunning;atomStart();const b=$("atomToggle");if(b)b.textContent=atomRunning?"⏸ 一時停止":"▶ 再生";return}
+ if(t.dataset.atomReset!==undefined){atomTime=0;atomRunning=true;atomStart();const b=$("atomToggle");if(b)b.textContent="⏸ 一時停止";return}
+ if(t.dataset.fav!==undefined){const z=+t.dataset.fav;if(favorites.has(z))favorites.delete(z);else favorites.add(z);localStorage.setItem("chemistry-favorites",JSON.stringify([...favorites]));draw();return}
+ if(t.dataset.answer!==undefined){if(!quizAnswered){quizChoice=+t.dataset.answer;quizAnswered=true;if(quizChoice===QUIZ[quizIndex].c)quizScore++;draw()}return}
+ if(t.dataset.next!==undefined){quizIndex++;quizAnswered=false;quizChoice=-1;draw();return}
+ if(t.dataset.restart!==undefined){quizIndex=0;quizScore=0;quizAnswered=false;quizChoice=-1;draw();return}
+ if(t.dataset.r!==undefined){labInit();return}
  if(t.dataset.h!==undefined){hsel=+t.dataset.h;draw();return}
  if(t.dataset.i){const j=ISO.findIndex(a=>a[0]==t.dataset.i&&a[2]);if(j>=0){hsel=j;tab="hl";draw();scrollTo(0,0)}return}
- if(t.dataset.p){hlPlay();return}
+ if(t.dataset.p!==undefined){hlPlay();return}
  if(t.dataset.x){const i=EX.findIndex(a=>a.k==t.dataset.x);if(i>=0){cur=i;tab="lab";draw();scrollTo(0,0)}return}
  if(t.dataset.e!==undefined){cur=+t.dataset.e;draw();return}
  if(t.dataset.t){tab=t.dataset.t}
- else if(t.dataset.z){sel=+t.dataset.z}
- else filt=filt==t.dataset.c?null:t.dataset.c;
- draw()});
+ else if(t.dataset.z){sel=+t.dataset.z;atomTime=0}
+ else if(t.dataset.c!==undefined){filt=filt===t.dataset.c?null:t.dataset.c}
+ draw();
+});
 $("q").addEventListener("input",ev=>{q=ev.target.value.trim().toLowerCase();draw()});
 const themeButton=$("themeToggle");
 function themeLabel(){themeButton.textContent=document.documentElement.dataset.theme==="dark"?"☀ ライトモード":"☾ ダークモード"}
 const storedTheme=localStorage.getItem("chemistry-theme");if(storedTheme)document.documentElement.dataset.theme=storedTheme;
 themeButton.addEventListener("click",()=>{const dark=document.documentElement.dataset.theme==="dark"||(document.documentElement.dataset.theme!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches);document.documentElement.dataset.theme=dark?"light":"dark";localStorage.setItem("chemistry-theme",document.documentElement.dataset.theme);themeLabel()});
-themeLabel();draw();
+themeLabel();applyLayout();draw();
 </script>
 </body>
 </html>
