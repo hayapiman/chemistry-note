@@ -126,6 +126,30 @@ body[data-layout="mobile"] .atom-panel{padding:12px}
 }
 @media(prefers-reduced-motion:reduce){.atom-electron{transition:none}}
 
+
+/* Linked glossary */
+.glossary-head{background:var(--panel);border:1px solid var(--line);padding:20px 24px;border-radius:18px;margin-bottom:14px}
+.glossary-head h2{font-size:1.6rem;margin:0}
+.glossary-head h2 small{font-size:.8rem;color:var(--sub)}
+.glossary-head p{margin:4px 0;color:var(--sub)}
+.term-categories{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.term-categories button{font:inherit;font-size:.83rem;border:1px solid var(--line);border-radius:999px;padding:7px 12px;background:var(--panel);color:var(--ink);cursor:pointer}
+.term-categories button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.term-categories small{opacity:.8}
+.term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:12px}
+.term-card{display:flex;flex-direction:column;gap:6px}
+.term-category-label{font-size:.73rem;color:var(--accent);font-weight:700}
+.term-card h3{margin:0}
+.term-card p{margin:0;flex:1}
+.term-detail-button{font:inherit;font-size:.85rem;font-weight:700;color:var(--accent);background:transparent;border:0;text-align:left;padding:8px 0;cursor:pointer;align-self:flex-start}
+.term-related{border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.term-related h4{margin:0 0 8px}
+.related-group{margin:9px 0}
+.related-group strong{display:block;font-size:.8rem;margin-bottom:4px;color:var(--sub)}
+.related-items{display:flex;flex-wrap:wrap;gap:6px}
+.related-link{font:inherit;font-size:.79rem;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:6px 9px;cursor:pointer}
+.related-link:hover{border-color:var(--accent);color:var(--accent)}
+.focus-header{margin:8px 0}
 </style>
 </head>
 <body>
@@ -445,18 +469,63 @@ function atomStart(){
  atomRaf=requestAnimationFrame(step);
 }
 
+
+const TERM_CATEGORIES=["原子の構造","周期表と元素","化学結合","化学反応と速度","酸・塩基と溶液","物質量と熱化学","電気化学","有機化学","原子核と放射線"];
+const TERM_CATEGORY_MAP={"原子":"原子の構造","分子":"原子の構造","イオン":"原子の構造","電子":"原子の構造","同位体":"原子核と放射線","共有結合":"化学結合","イオン結合":"化学結合","酸と塩基":"酸・塩基と溶液","pH":"酸・塩基と溶液","モル":"物質量と熱化学","触媒":"化学反応と速度","酸化と還元":"化学反応と速度","化合物":"周期表と元素","周期律":"周期表と元素","質量数":"原子核と放射線","同素体":"周期表と元素","放射性同位体":"原子核と放射線","半減期":"原子核と放射線","α崩壊":"原子核と放射線","β⁻崩壊":"原子核と放射線","γ線":"原子核と放射線","質量欠損":"原子核と放射線","核分裂":"原子核と放射線","核融合":"原子核と放射線","価電子":"原子の構造","電子殻と軌道":"原子の構造","電気陰性度":"化学結合","イオン化エネルギー":"周期表と元素","金属結合":"化学結合","水素結合":"化学結合","ファンデルワールス力":"化学結合","活性化エネルギー":"化学反応と速度","ルシャトリエの原理":"化学反応と速度","酸化数":"化学反応と速度","溶解度積":"酸・塩基と溶液","異性体":"有機化学","錯体":"化学結合","放射能":"原子核と放射線","ベクレルとシーベルト":"原子核と放射線","崩壊系列":"原子核と放射線","放射性炭素年代測定":"原子核と放射線","魔法数":"原子核と放射線","標準電極電位":"電気化学","ファラデーの法則":"電気化学","エンタルピー":"物質量と熱化学","ヘスの法則":"物質量と熱化学","緩衝液":"酸・塩基と溶液","官能基":"有機化学","重合":"有機化学","コロイド":"酸・塩基と溶液","浸透圧":"酸・塩基と溶液"};
+const TERM_LINKS={"原子":{"terms":["原子核","電子","陽子","中性子","電子配置"],"people":["ドルトン","ラザフォード","ボーア"],"elements":["H","C"]},"電子":{"terms":["電子配置","価電子","電子軌道"],"people":["ボーア"],"elements":["H"]},"周期律":{"terms":["原子番号","原子半径","アルカリ金属"],"people":["メンデレーエフ"],"elements":["Na","Cl"]},"同位体":{"terms":["核種","半減期","質量数"],"elements":["C","U"],"people":["マリー・キュリー"]},"半減期":{"terms":["放射性同位体","放射性炭素年代測定"],"elements":["C","I"],"people":["ベクレル"]},"放射能":{"terms":["放射線","半減期"],"people":["ベクレル","マリー・キュリー"],"elements":["U","Ra"]},"酸と塩基":{"terms":["pH","中和反応","水素イオン"],"people":["アレニウス"],"reactions":["中和"]},"pH":{"terms":["酸と塩基","緩衝液","中和反応"],"reactions":["中和"]},"酸化と還元":{"terms":["酸化剤","還元剤","酸化数"],"reactions":["テルミット反応","酸化銅の還元","鉄のさび"]},"触媒":{"terms":["反応速度","活性化エネルギー"],"people":["フリッツ・ハーバー"],"reactions":["アンモニア合成","過酸化水素の分解"]},"ルシャトリエの原理":{"terms":["化学平衡"],"reactions":["アンモニア合成"],"people":["フリッツ・ハーバー"]},"電気陰性度":{"terms":["共有結合","イオン結合"],"elements":["F"],"people":["ポーリング"]},"電子殻と軌道":{"terms":["電子配置","電子軌道"],"people":["ボーア"],"elements":["Ne","Na"]},"モル":{"terms":["アボガドロ定数","モル濃度"],"people":["アボガドロ"]},"ファラデーの法則":{"terms":["電気分解"],"reactions":["水の電気分解"]},"標準電極電位":{"terms":["電池","酸化と還元"],"reactions":["ダニエル電池"],"elements":["Zn","Cu"]},"官能基":{"terms":["アルコール","カルボン酸","エステル"],"reactions":["エステル化"]},"重合":{"terms":["高分子"],"people":["白川英樹"]},"放射性炭素年代測定":{"terms":["半減期","同位体"],"elements":["C"]},"核分裂":{"terms":["核反応","放射性同位体"],"elements":["U"]},"核融合":{"terms":["核反応"],"elements":["H","He"]},"質量数":{"terms":["原子核","同位体"],"elements":["C"]},"共有結合":{"terms":["共有電子対","電気陰性度"],"elements":["H","O"],"people":["ポーリング"]},"イオン結合":{"terms":["イオン","電気陰性度"],"elements":["Na","Cl"],"reactions":["ナトリウムと塩素"]}};
+const TERM_EXTRA=[["原子核","原子の中心にあり、陽子と中性子から構成される部分。","原子の構造",["原子","質量数"],["H","He"],["ラザフォード"],[]],["陽子","正の電荷をもつ原子核内の粒子。陽子数が原子番号を決める。","原子の構造",["原子核","同位体"],["H"],["ラザフォード"],[]],["中性子","電荷をもたない原子核内の粒子。同位体の違いに関係する。","原子の構造",["原子核","同位体"],["C"],[],[]],["原子番号","原子核に含まれる陽子の数。元素の種類を決定する。","原子の構造",["陽子","周期律"],["H","C"],["メンデレーエフ"],[]],["電子配置","原子やイオンの電子が殻・軌道に分布する状態。","原子の構造",["電子","価電子","電子殻と軌道"],["Ne","Na"],["ボーア"],[]],["電子軌道","電子が存在する確率を表す空間的な分布。s、p、d、fなどがある。","原子の構造",["電子配置","電子殻と軌道"],["C"],["福井謙一"],[]],["励起状態","原子や分子がエネルギーを受け取り、基底状態より高いエネルギーにある状態。","原子の構造",["電子配置","発光スペクトル"],["Na"],["ボーア"],[]],["発光スペクトル","励起された原子などが放出する光を波長ごとに分けたもの。","原子の構造",["励起状態","電子配置"],["Na","Cu"],["ボーア"],[]],["原子半径","原子の大きさを表す指標。結合の種類などによって定義が異なる。","周期表と元素",["周期律","イオン化エネルギー"],["Li","Na"],[],[]],["アルカリ金属","周期表1族のうち水素を除く金属元素。水と反応しやすい。","周期表と元素",["周期律","イオン化エネルギー"],["Li","Na","K"],[],[]],["ハロゲン","周期表17族の元素。電子を受け取りやすく、塩を形成する。","周期表と元素",["電気陰性度","イオン結合"],["F","Cl"],[],["ナトリウムと塩素"]],["貴ガス","周期表18族の元素。一般に反応性が低い。","周期表と元素",["価電子","電子配置"],["He","Ne","Ar"],[],[]],["水素イオン","水素原子が電子を失って生じる陽イオン。水溶液では水和して存在する。","酸・塩基と溶液",["酸と塩基","pH"],["H"],["アレニウス"],["中和"]],["中和反応","酸と塩基が反応すること。条件により水や塩が生成する。","酸・塩基と溶液",["酸と塩基","pH"],["H","Na","Cl"],["アレニウス"],["中和"]],["電離","物質が溶媒中などで陽イオンと陰イオンに分かれる現象。","酸・塩基と溶液",["イオン","酸と塩基"],["Na","Cl"],["アレニウス"],[]],["電解質","水に溶けたり融解したりすると電気を通す物質。","酸・塩基と溶液",["電離","イオン"],["Na","Cl"],["アレニウス"],["水の電気分解"]],["酸化剤","他の物質から電子を受け取り、その物質を酸化する物質。","化学反応と速度",["酸化と還元","酸化数"],["O","Cl"],[],["テルミット反応"]],["還元剤","他の物質に電子を与え、その物質を還元する物質。","化学反応と速度",["酸化と還元","酸化数"],["H","C"],[],["酸化銅の還元"]],["反応速度","化学反応に伴う濃度などの時間変化の速さ。","化学反応と速度",["触媒","活性化エネルギー"],[],[],["過酸化水素の分解"]],["化学平衡","可逆反応の正反応と逆反応の速さが等しい状態。","化学反応と速度",["ルシャトリエの原理","触媒"],["N","H"],["フリッツ・ハーバー"],["アンモニア合成"]],["燃焼","物質が酸化剤と反応し、熱や光を発する反応。","化学反応と速度",["酸化と還元","活性化エネルギー"],["O","C"],["ラヴォアジエ"],["燃焼(メタン)","水素の燃焼"]],["沈殿","溶液中の反応などによって生じる溶けにくい固体。","酸・塩基と溶液",["溶解度積","イオン"],["Ag","Cl"],[],["沈殿の生成"]],["電池","酸化還元反応などを利用して化学エネルギーを電気エネルギーに変換する装置。","電気化学",["酸化と還元","標準電極電位"],["Zn","Cu"],["吉野彰"],["ダニエル電池"]],["電気分解","外部から電気エネルギーを与え、非自発的な酸化還元反応を進める操作。","電気化学",["ファラデーの法則","イオン"],["H","O"],[],["水の電気分解"]],["共有電子対","共有結合に使われる2個の電子の組。","化学結合",["共有結合","電子"],["H","O"],["ポーリング"],[]],["配位結合","一方の原子・イオンが電子対を提供して形成される共有結合。","化学結合",["錯体","共有結合"],["Cu","N"],[],[]],["分子間力","分子間にはたらく相互作用の総称。","化学結合",["水素結合","ファンデルワールス力"],["H","O"],[],[]],["有機化合物","一般に炭素を骨格とする化合物の総称。","有機化学",["官能基","異性体"],["C","H"],[],["エステル化"]],["アルコール","炭素原子にヒドロキシ基が結合した有機化合物の一群。","有機化学",["官能基","エステル化"],["C","O"],[],["エタノールの燃焼"]],["カルボン酸","カルボキシ基（-COOH）をもつ有機化合物。","有機化学",["官能基","エステル化"],["C","O"],[],["エステル化"]],["エステル","カルボン酸とアルコールなどから得られる化合物の一群。","有機化学",["官能基","重合"],["C","O"],[],["エステル化"]],["放射線","不安定な原子核などから放出される粒子線や電磁波。","原子核と放射線",["放射能","γ線","α崩壊"],["U","Ra"],["ベクレル","マリー・キュリー"],[]],["核種","原子番号と質量数などで区別される原子の種類。","原子核と放射線",["同位体","質量数"],["C","U"],[],[]],["核反応","原子核が変化し、別の核種などになる反応。","原子核と放射線",["核分裂","核融合"],["U","H"],["ラザフォード"],[]],["モル濃度","溶液1 L中に含まれる溶質の物質量（mol/L）。","物質量と熱化学",["モル","溶解度積"],[],["アボガドロ"],[]],["アボガドロ定数","1 molあたりの構成粒子数。正確に6.02214076×10²³ mol⁻¹。","物質量と熱化学",["モル","分子"],[],["アボガドロ"],[]],["発熱反応","周囲に熱を放出する反応。","物質量と熱化学",["エンタルピー","ヘスの法則"],["Mg","O"],[],["燃焼(メタン)"]],["吸熱反応","周囲から熱を吸収する反応。","物質量と熱化学",["エンタルピー","ヘスの法則"],[],[],[]],["高分子","多数の繰り返し単位などから構成される大きな分子。","有機化学",["重合","官能基"],["C"],["白川英樹"],[]]];
+let termCategory="all",termSelected=null,focusItem=null;
+const termData=()=>[...GL.map(a=>({name:a[0],desc:a[1],category:TERM_CATEGORY_MAP[a[0]]||"化学反応と速度",...(TERM_LINKS[a[0]]||{})})),...TERM_EXTRA.map(a=>({name:a[0],desc:a[1],category:a[2],terms:a[3],elements:a[4],people:a[5],reactions:a[6]}))];
+const escapeHtml=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function linkButton(kind,name,label){
+ return '<button class="related-link" type="button" data-go-kind="'+kind+'" data-go-name="'+escapeHtml(name)+'">'+escapeHtml(label||name)+' ↗</button>';
+}
+function termRelations(t){
+ let html="";
+ const entries=[["terms","用語","term"],["elements","元素","element"],["people","研究者","person"],["reactions","反応","reaction"]];
+ for(const [key,label,kind] of entries){
+  const names=(t[key]||[]).filter(n=>kind==="term"?termData().some(x=>x.name===n):kind==="element"?EL.some(x=>x.sym===n):kind==="person"?RS.some(x=>x[0]===n):RX.some(x=>x[0]===n));
+  if(names.length)html+='<div class="related-group"><strong>'+label+'</strong><div class="related-items">'+names.map(n=>linkButton(kind,n,kind==="element"?(EL.find(e=>e.sym===n)?.name+" ("+n+")"):n)).join("")+'</div></div>';
+ }
+ return html||'<p class="meta">関連項目は順次追加予定です。</p>';
+}
+function glossary(){
+ const all=termData();
+ const groups=['all',...TERM_CATEGORIES];
+ const matches=all.filter(t=>(termCategory==="all"||t.category===termCategory)&&hit(t.name,t.desc,t.category));
+ return '<section class="glossary-head"><div><p class="meta">CHEMISTRY GLOSSARY</p><h2>化学用語辞典 <small>'+all.length+'語</small></h2><p>分野別に探して、関連する元素・反応・研究者へ移動できます。</p></div></section>'+
+ '<div class="term-categories" role="group" aria-label="用語カテゴリ">'+groups.map(c=>'<button type="button" data-term-cat="'+escapeHtml(c)+'" aria-pressed="'+(termCategory===c)+'">'+(c==="all"?"すべて":escapeHtml(c))+' <small>'+ (c==="all"?all.length:all.filter(t=>t.category===c).length)+'</small></button>').join("")+'</div>'+
+ '<p class="meta">'+matches.length+'件の用語</p><div class="term-grid">'+matches.map(t=>'<article class="item term-card"><span class="term-category-label">'+escapeHtml(t.category)+'</span><h3>'+escapeHtml(t.name)+'</h3><p>'+escapeHtml(t.desc)+'</p><button class="term-detail-button" data-term-open="'+escapeHtml(t.name)+'">関連情報を見る →</button>'+(termSelected===t.name?'<div class="term-related"><h4>関連する内容</h4>'+termRelations(t)+'</div>':"")+'</article>').join("")+'</div>';
+}
+function focusedList(arr,kind,fn){
+ const found=focusItem&&focusItem.kind===kind;
+ const rows=found?arr.filter(a=>a[0]===focusItem.name):arr.filter(a=>hit(...a));
+ return '<div class="focus-header">'+(found?'<button class="utility" data-focus-clear="1">← 一覧へ戻る</button>':"")+'</div>'+(rows.length?'<div class="list">'+rows.map(fn).join("")+'</div>':'<p class="empty">一致する項目はありません。</p>');
+}
+function goRelated(kind,name){
+ if(kind==="term"){tab="gl";termCategory="all";termSelected=name;q="";$("q").value="";}
+ else if(kind==="element"){const e=EL.find(x=>x.sym===name);if(!e)return;tab="pt";sel=e.z;filt=null;q="";$("q").value="";atomTime=0;}
+ else if(kind==="person"){tab="rs";focusItem={kind:"person",name};q="";$("q").value="";}
+ else if(kind==="reaction"){tab="rx";focusItem={kind:"reaction",name};q="";$("q").value="";}
+ draw();window.scrollTo({top:0,behavior:"smooth"});
+}
+
 function view(){
  if(tab=="quiz")return quizIndex>=QUIZ.length?quizResult():quiz();
  if(tab=="lab")return lab();
  if(tab=="hl")return hl();
  if(tab=="pt")return pt();
- if(tab=="rx")return list(RX,a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`,q);
- if(tab=="rs")return list(RS,a=>`<article class="item"><h3>${a[0]}</h3><p class="meta">${a[1]}・${a[2]}</p><p>${a[3]}</p></article>`,q);
- return list(GL,a=>`<article class="item"><h3>${a[0]}</h3><p>${a[1]}</p></article>`,q)}
+ if(tab=="rx")return focusedList(RX,"reaction",a=>`<article class="item"><h3>${a[0]}</h3><p class="meta"><span class="tag" style="--h:215">${a[1]}</span></p><div class="eq">${a[2]}</div><p>${a[3]}</p></article>`);
+ if(tab=="rs")return focusedList(RS,"person",a=>`<article class="item"><h3>${a[0]}</h3><p class="meta">${a[1]}・${a[2]}</p><p>${a[3]}</p></article>`);
+ return glossary()}
 function draw(){stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();if(tab=="lab")labInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
 document.addEventListener("click",ev=>{
- const t=ev.target.closest("[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
+ const t=ev.target.closest("[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
  if(!t)return;
+ if(t.dataset.termCat!==undefined){termCategory=t.dataset.termCat;termSelected=null;draw();return}
+ if(t.dataset.termOpen!==undefined){termSelected=termSelected===t.dataset.termOpen?null:t.dataset.termOpen;draw();return}
+ if(t.dataset.goKind){goRelated(t.dataset.goKind,t.dataset.goName);return}
+ if(t.dataset.focusClear!==undefined){focusItem=null;draw();return}
  if(t.dataset.layout){layoutMode=t.dataset.layout;localStorage.setItem("chemistry-layout",layoutMode);applyLayout();return}
  if(t.dataset.atomToggle!==undefined){atomRunning=!atomRunning;atomStart();const b=$("atomToggle");if(b)b.textContent=atomRunning?"⏸ 一時停止":"▶ 再生";return}
  if(t.dataset.atomReset!==undefined){atomTime=0;atomRunning=true;atomStart();const b=$("atomToggle");if(b)b.textContent="⏸ 一時停止";return}
@@ -470,7 +539,7 @@ document.addEventListener("click",ev=>{
  if(t.dataset.p!==undefined){hlPlay();return}
  if(t.dataset.x){const i=EX.findIndex(a=>a.k==t.dataset.x);if(i>=0){cur=i;tab="lab";draw();scrollTo(0,0)}return}
  if(t.dataset.e!==undefined){cur=+t.dataset.e;draw();return}
- if(t.dataset.t){tab=t.dataset.t}
+ if(t.dataset.t){tab=t.dataset.t;focusItem=null}
  else if(t.dataset.z){sel=+t.dataset.z;atomTime=0}
  else if(t.dataset.c!==undefined){filt=filt===t.dataset.c?null:t.dataset.c}
  draw();
