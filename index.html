@@ -339,6 +339,8 @@ html{scrollbar-gutter:stable}
 .accelerator-table-wrap,.radiation-table-wrap{max-width:100%;overflow-x:auto}
 @supports not (scrollbar-gutter:stable){html{overflow-y:scroll}}
 @media(max-width:640px){.accelerator-page,.radiation-page{width:100%}.radiation-demo{overflow:hidden}.radiation-track{min-width:0}.accelerator-controls{min-width:0}}
+
+.nuclear-page{max-width:1080px;width:100%;min-width:0;box-sizing:border-box;margin:auto;display:grid;gap:18px}.nuclear-page>*{min-width:0;max-width:100%;box-sizing:border-box}.nuclear-hero{border-radius:23px;background:linear-gradient(125deg,#142944,#2c5286);color:white;padding:clamp(24px,5vw,48px)}.nuclear-hero>span,.nuclear-eyebrow{font-size:.73rem;letter-spacing:.13em;font-weight:800;color:#a9cfff}.nuclear-hero h2{font-size:clamp(1.8rem,4vw,2.6rem);margin:12px 0}.nuclear-hero p{color:#dfebff;max-width:720px;line-height:1.9}.nuclear-panel{border:1px solid var(--line);border-radius:19px;background:var(--panel);padding:clamp(16px,3vw,26px);min-width:0}.nuclear-eyebrow{color:var(--accent)}.nuclear-panel h3{font-size:1.3rem;margin:7px 0 18px}.nuclear-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:16px}.nuclear-switch button{font:inherit;text-align:left;display:flex;flex-direction:column;gap:5px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:13px;padding:15px;cursor:pointer}.nuclear-switch button[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.nuclear-switch small{color:var(--sub)}.nuclear-stage{background:#0c1b34;color:#d8e9ff;border-radius:14px;overflow:hidden}.nuclear-stage canvas{display:block;width:100%;height:auto;aspect-ratio:860/380}.nuclear-stage p{font-size:.73rem;color:#bed2ee;padding:0 16px 13px;margin:0;line-height:1.7}.nuclear-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:15px 0}.nuclear-controls button,.nuclear-resources button{font:inherit;border:1px solid var(--accent);background:var(--accent);color:white;border-radius:10px;padding:10px 14px;cursor:pointer}.nuclear-controls label{display:flex;align-items:center;gap:8px;font-size:.85rem}.nuclear-controls input{accent-color:var(--accent);max-width:140px}.nuclear-equation,.nuclear-insight{border-radius:13px;background:var(--bg);border:1px solid var(--line);padding:17px}.nuclear-equation p{font-size:clamp(.95rem,2vw,1.25rem);font-weight:750;overflow-wrap:anywhere;line-height:1.8}.nuclear-equation small{color:var(--sub);line-height:1.7}.nuclear-intro,.nuclear-insight p{line-height:2;color:var(--sub)}.nuclear-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.nuclear-steps article{display:flex;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:17px}.nuclear-steps article>span{color:var(--accent);font-weight:800}.nuclear-steps h4{margin:0 0 8px}.nuclear-steps p,.nuclear-apps p{font-size:.88rem;line-height:1.9;color:var(--sub);margin:0}.nuclear-formula{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;letter-spacing:.05em;text-align:center;padding:22px;background:var(--bg);border-radius:13px}.nuclear-table-wrap{max-width:100%;overflow-x:auto}.nuclear-table{width:100%;min-width:610px;border-collapse:collapse;font-size:.85rem}.nuclear-table th,.nuclear-table td{padding:13px 11px;border-bottom:1px solid var(--line);text-align:left;line-height:1.7}.nuclear-table thead{background:var(--bg)}.nuclear-apps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px}.nuclear-apps article{padding:16px;border:1px solid var(--line);background:var(--bg);border-radius:12px}.nuclear-apps h4{margin:0 0 8px}.nuclear-resources>div{display:flex;gap:8px;flex-wrap:wrap}.nuclear-resources a{display:block;color:var(--accent);margin:8px 0;font-size:.87rem}@media(max-width:640px){.nuclear-steps,.nuclear-apps{grid-template-columns:1fr}.nuclear-controls label{width:100%}.nuclear-stage p{font-size:.7rem}}
 </style>
 </head>
 <body>
@@ -463,7 +465,7 @@ const GL=[
 ["浸透圧","半透膜をへだてて濃度が違う溶液があるとき、溶媒が濃いほうへ移動しようとする圧力。"],
 ["配位結合","結合する電子対を片方の原子が一方的に出してできる共有結合。錯体にみられます。"]];
 let tab="home",q="",filt=null,sel=8,cur=0;
-const TABS=[["home","ホーム"],["accelerator","加速器"],["radiation","放射線の種類"],["incidents","科学の事件・事故"],["timeline","科学年表"],["pt","周期表"],["rx","化学反応"],["lab","擬似実験"],["hl","半減期"],["rs","研究者"],["gl","用語"],["quiz","学習クイズ"],["notes","📌 付箋"]];
+const TABS=[["home","ホーム"],["nuclear","核分裂・核融合"],["accelerator","加速器"],["radiation","放射線の種類"],["incidents","科学の事件・事故"],["timeline","科学年表"],["pt","周期表"],["rx","化学反応"],["lab","擬似実験"],["hl","半減期"],["rs","研究者"],["gl","用語"],["quiz","学習クイズ"],["notes","📌 付箋"]];
 let quizIndex=0,quizScore=0,quizAnswered=false,quizChoice=-1;
 let favorites=new Set(JSON.parse(localStorage.getItem("chemistry-favorites")||"[]"));
 const $=id=>document.getElementById(id);
@@ -561,7 +563,7 @@ function hl(){const I=ISO[hsel],nm=(EL.find(x=>x.sym==I[0])||{}).name||"";
  return `<div class="item" style="margin-bottom:12px"><h3>${sup(I[1])}${I[0]}(${nm})</h3><p class="meta">半減期 ${fmt(I[2])}・${MODE[I[3]]}</p><p>${I[4]}</p><input type="range" id="hs" min="0" max="8" step="0.5" value="0" aria-label="経過した半減期の回数"><canvas id="dc" width="400" height="60"></canvas><p id="hn" class="meta"></p><button class="chip" style="--h:155" data-p="1">再生</button></div><p class="meta">赤: α崩壊 / 青: β崩壊・電子捕獲など(バーの長さは半減期の対数。10⁻⁴秒〜10²⁷秒)</p>${rows||`<p class="empty">一致する同位体がありません。</p>`}`}
 function hlUpdate(){const s=$("hs");if(!s)return;const n=+s.value,I=ISO[hsel],c=$("dc").getContext("2d"),d=Math.round(200*(1-.5**n));c.clearRect(0,0,400,60);RK.forEach((r,i)=>{c.fillStyle=r<d?"rgba(138,147,173,.35)":"#2f7bff";c.beginPath();c.arc(8+(i%40)*10,8+Math.floor(i/40)*10,3.5,0,6.3);c.fill()});$("hn").textContent=(n?n+"回分("+fmt(I[2]*n)+")経過":"開始時")+" → 未崩壊 "+(100*.5**n).toFixed(n<4?1:3)+"%"}
 function hlPlay(){cancelAnimationFrame(raf2);const s=$("hs");if(matchMedia("(prefers-reduced-motion:reduce)").matches){s.value=4;hlUpdate();return}s.value=0;const step=()=>{s.value=+s.value+.04;hlUpdate();if(+s.value<8)raf2=requestAnimationFrame(step)};step()}
-document.addEventListener("input",ev=>{if(ev.target.id=="hs")hlUpdate();if(ev.target.id==="acceleratorSpeed"){acceleratorSpeed=Number(ev.target.value);document.getElementById("acceleratorSpeedValue").textContent=acceleratorSpeed+"×"}if(ev.target.id==="acceleratorField"){acceleratorField=Number(ev.target.value);document.getElementById("acceleratorFieldValue").textContent=acceleratorField+"%"}});
+document.addEventListener("input",ev=>{if(ev.target.id=="hs")hlUpdate();if(ev.target.id==="nuclearSpeed"){nuclearSpeed=Number(ev.target.value);document.getElementById("nuclearSpeedValue").textContent=nuclearSpeed+"×"}if(ev.target.id==="acceleratorSpeed"){acceleratorSpeed=Number(ev.target.value);document.getElementById("acceleratorSpeedValue").textContent=acceleratorSpeed+"×"}if(ev.target.id==="acceleratorField"){acceleratorField=Number(ev.target.value);document.getElementById("acceleratorFieldValue").textContent=acceleratorField+"%"}});
 const rgb=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
 const mix=(a,b,k)=>{const x=rgb(a),y=rgb(b);return"rgb("+x.map((v,i)=>Math.round(v+(y[i]-v)*k)).join()+")"};
 function stopLab(){cancelAnimationFrame(raf);cancelAnimationFrame(raf2)}
@@ -757,6 +759,7 @@ function goRelated(kind,name){
 }
 
 function view(){
+ if(tab==="nuclear")return nuclearPage();
  if(tab==="accelerator")return acceleratorPage();
  if(tab==="radiation")return radiationPage();
  if(tab==="incidents")return incidentLibrary();
@@ -794,6 +797,7 @@ function scienceTimeline(){
 const HOME_CARDS=[
  ["pt","⚛","周期表","118元素の特徴・原子モデル・身近な用途を調べる","elements"],
  ["gl","📖","化学用語辞典","分野ごとに用語を整理し、関連情報へつなげる","terms"],
+ ["nuclear","⚛","核分裂・核融合","原子核の反応をアニメーションで学ぶ","nuclear"],
  ["accelerator","⚡","粒子加速器","3方式のアニメーションと原理を学ぶ","accelerator"],
  ["radiation","☢","放射線の種類","α線・β線などの特徴と透過力を比較する","radiation"],
  ["incidents","📜","科学の事件・事故","デーモンコアなどの事故と科学的な教訓を記事で読む","incidents"],
@@ -893,10 +897,50 @@ function acceleratorInit(){
  }frame();
 }
 
-function draw(){acceleratorStop();stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();$("q").placeholder=tab==="home"?"学びたいテーマを検索": "名前・記号・キーワードで検索";if(tab=="lab")labInit();if(tab==="accelerator")acceleratorInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
+
+const NUCLEAR_MODES={
+fission:{name:"核分裂",subtitle:"重い原子核が分かれる",intro:"ウラン235などの重い原子核が中性子を吸収し、分裂して別の原子核と中性子を生みます。分裂で生じた中性子が次の分裂を起こすと連鎖反応になります。",equation:"²³⁵U + ¹n → ²³⁶U* → ¹⁴¹Ba + ⁹²Kr + 3¹n + エネルギー",note:"これは核分裂生成物の組み合わせの一例です。実際には複数の分裂経路があります。",steps:[["中性子が飛び込む","核分裂しやすいウラン235に中性子が吸収され、励起した複合核ができます。"],["原子核が変形する","不安定な状態になった重い原子核が変形し、2つの比較的軽い核へ分かれます。"],["エネルギーと中性子が出る","分裂片の運動エネルギーや放射線などが生じ、さらに中性子が放出されます。"],["連鎖反応の可能性","新しい中性子が別の核分裂を起こすことがあります。原子炉ではこの連鎖反応を制御します。"]],applications:[["原子力発電","制御された核分裂による熱で蒸気をつくり、タービンと発電機を動かします。"],["研究用原子炉","中性子を利用して材料分析、研究、医療用同位体の製造などを行います。"]],caution:"核分裂では放射性の分裂生成物が生じます。運転停止後も崩壊熱が残るため、冷却と放射線管理が重要です。"},
+fusion:{name:"核融合",subtitle:"軽い原子核が結びつく",intro:"軽い原子核どうしが結びつき、より重い原子核をつくる反応です。代表例として重水素と三重水素の反応が研究されています。太陽では主に水素がヘリウムに変わる核融合がエネルギー源です。",equation:"²H + ³H → ⁴He + ¹n + 17.6 MeV",note:"重水素・三重水素（D-T）核融合の例。放出エネルギーの大部分は中性子の運動エネルギーになります。",steps:[["軽い原子核を用意する","重水素（陽子1・中性子1）と三重水素（陽子1・中性子2）などを燃料として考えます。"],["非常に高温にする","正に帯電した原子核どうしの電気的反発を越えて反応しやすくするため、非常に高い温度が必要です。"],["原子核が結びつく","十分に近づいた原子核が強い核力によって結びつき、ヘリウム原子核と中性子が生じます。"],["エネルギーを取り出す","生じた粒子のエネルギーを熱などとして回収する研究が進められています。"]],applications:[["核融合エネルギー研究","トカマクやレーザーを用いて高温プラズマを閉じ込め、エネルギーを取り出す技術を研究しています。"],["恒星のエネルギー","太陽などの恒星では、重力で閉じ込められた高温高密度の物質の内部で核融合が進みます。"]],caution:"核融合も放射線対策が不要というわけではありません。D-T核融合では高エネルギー中性子が発生し、材料の放射化やトリチウムの管理が課題です。"}
+};
+let nuclearMode="fission",nuclearPlaying=true,nuclearSpeed=1,nuclearFrame=0,nuclearRaf=0;
+function nuclearPage(){
+ const a=NUCLEAR_MODES[nuclearMode];
+ return '<section class="nuclear-page"><header class="nuclear-hero"><span>NUCLEAR SCIENCE LAB</span><h2>核分裂と核融合</h2><p>原子核が分かれるとき、結びつくとき、何が起こる？ アニメーションと解説でエネルギーのしくみを学ぼう。</p></header>'+
+ '<section class="nuclear-panel"><div class="nuclear-eyebrow">01 / INTERACTIVE DEMO</div><h3>原子核の変化を観察する</h3><div class="nuclear-switch">'+Object.entries(NUCLEAR_MODES).map(([k,v])=>'<button type="button" data-nuclear-mode="'+k+'" aria-pressed="'+(k===nuclearMode)+'"><strong>'+v.name+'</strong><small>'+v.subtitle+'</small></button>').join("")+'</div><div class="nuclear-stage"><canvas id="nuclearCanvas" width="860" height="380" role="img" aria-label="'+a.name+'の模式アニメーション"></canvas><p>粒子の色・数・動きは理解を助けるための模式表現です。原子核の実際の大きさや反応時間は再現していません。</p></div><div class="nuclear-controls"><button type="button" data-nuclear-play="1">'+(nuclearPlaying?"一時停止":"再生")+'</button><button type="button" data-nuclear-reset="1">↻ 最初から</button><label>速度 <input type="range" id="nuclearSpeed" min="1" max="4" step="1" value="'+nuclearSpeed+'"><output id="nuclearSpeedValue">'+nuclearSpeed+'×</output></label></div><div class="nuclear-equation"><strong>代表的な反応式</strong><p>'+a.equation+'</p><small>'+a.note+'</small></div></section>'+
+ '<section class="nuclear-panel"><div class="nuclear-eyebrow">02 / HOW IT WORKS</div><h3>'+a.name+'はどのように起きる？</h3><p class="nuclear-intro">'+a.intro+'</p><div class="nuclear-steps">'+a.steps.map((x,i)=>'<article><span>'+String(i+1).padStart(2,"0")+'</span><div><h4>'+x[0]+'</h4><p>'+x[1]+'</p></div></article>').join("")+'</div></section>'+
+ '<section class="nuclear-panel"><div class="nuclear-eyebrow">03 / ENERGY</div><h3>なぜエネルギーが出るの？</h3><p class="nuclear-intro">原子核を構成する粒子の結びつき方が変わると、反応前後で静止質量の合計に差が生じることがあります。その質量差に相当するエネルギーが、粒子の運動エネルギーなどとして現れます。</p><div class="nuclear-formula">E = Δm c²</div><p class="nuclear-intro">Δm は反応前後の質量差、c は光速です。核子1個あたりの結合エネルギーは鉄やニッケル付近で大きくなるため、非常に重い核の分裂も、軽い核の融合も、条件によってエネルギーを放出できます。</p><div class="nuclear-insight"><strong>重要な注意</strong><p>核分裂も核融合も、すべての反応が必ずエネルギーを放出するわけではありません。どの原子核が反応するかで変わります。</p></div></section>'+
+ '<section class="nuclear-panel"><div class="nuclear-eyebrow">04 / COMPARE</div><h3>核分裂と核融合の違い</h3><div class="nuclear-table-wrap"><table class="nuclear-table"><thead><tr><th>比較項目</th><th>核分裂</th><th>核融合</th></tr></thead><tbody><tr><th>反応</th><td>重い核が分かれる</td><td>軽い核が結びつく</td></tr><tr><th>代表例</th><td>ウラン235の核分裂</td><td>重水素と三重水素の核融合</td></tr><tr><th>反応の条件</th><td>核分裂しやすい核種では中性子の吸収がきっかけとなる</td><td>非常に高温など、原子核が接近できる条件が必要</td></tr><tr><th>制御の課題</th><td>中性子連鎖反応・冷却・核分裂生成物の管理</td><td>プラズマ閉じ込め・材料・中性子・燃料の管理</td></tr><tr><th>利用状況</th><td>商用原子力発電に利用</td><td>発電利用を目指して研究開発中</td></tr></tbody></table></div></section>'+
+ '<section class="nuclear-panel"><div class="nuclear-eyebrow">05 / REAL WORLD</div><h3>'+a.name+'の利用と研究</h3><div class="nuclear-apps">'+a.applications.map(x=>'<article><h4>'+x[0]+'</h4><p>'+x[1]+'</p></article>').join("")+'</div><div class="nuclear-insight"><strong>安全性について</strong><p>'+a.caution+'</p></div></section>'+
+ '<section class="nuclear-panel nuclear-resources"><h3>関連ページと参考資料</h3><div><button type="button" data-t="radiation">放射線の種類 →</button><button type="button" data-t="hl">半減期 →</button><button type="button" data-t="accelerator">粒子加速器 →</button><button type="button" data-t="incidents">科学の事件・事故 →</button></div><p>参考資料：</p><a href="https://www.iaea.org/newscenter/news/what-is-nuclear-fission" target="_blank" rel="noopener noreferrer">IAEA：What is Nuclear Fission? ↗</a><a href="https://www.iaea.org/newscenter/news/what-is-nuclear-fusion" target="_blank" rel="noopener noreferrer">IAEA：What is Nuclear Fusion? ↗</a><a href="https://www.iter.org/sci/Fusion" target="_blank" rel="noopener noreferrer">ITER：Fusion ↗</a></section></section>';
+}
+function nuclearStop(){cancelAnimationFrame(nuclearRaf);nuclearRaf=0}
+function nuclearInit(){
+ nuclearStop();const canvas=document.getElementById("nuclearCanvas");if(!canvas)return;const c=canvas.getContext("2d"),W=canvas.width,H=canvas.height;
+ function particle(x,y,r,color){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=color;c.fill();c.strokeStyle="rgba(255,255,255,.25)";c.lineWidth=1;c.stroke()}
+ function nucleus(x,y,count,scale=1){const rad=7*scale;for(let i=0;i<count;i++){const angle=i*2.39996,dist=Math.sqrt(i)*rad*.82;particle(x+Math.cos(angle)*dist,y+Math.sin(angle)*dist,rad,i%2?"#74b7ff":"#ffb86b")}}
+ function frame(){if(tab!=="nuclear"||document.getElementById("nuclearCanvas")!==canvas)return;c.fillStyle="#0c1b34";c.fillRect(0,0,W,H);const phase=(nuclearFrame%300)/300,cy=H/2; c.textAlign="center";c.font="15px sans-serif";c.fillStyle="#d8e9ff";
+ if(nuclearMode==="fission"){
+  const x=430,y=cy;
+  if(phase<.36){nucleus(x,y,86,.95);particle(80+phase/.36*320,y,8,"#f7e69a");c.fillText("中性子を吸収",430,48)}
+  else if(phase<.5){nucleus(x,y,86,.95+(.5-phase)*.3);c.fillText("励起した原子核",430,48)}
+  else{const p=Math.min(1,(phase-.5)/.35);nucleus(x-p*155,y-p*55,45,.9);nucleus(x+p*155,y+p*55,32,.9);for(let i=0;i<3;i++){let a=(i*2*Math.PI/3)-.5;particle(x+Math.cos(a)*p*230,y+Math.sin(a)*p*130,7,"#f7e69a")}c.fillText("分裂片と中性子が放出される",430,48)}
+ }else{
+  const p=Math.min(1,phase/.6),d=Math.max(0,200-p*210);if(phase<.6){nucleus(430-d,cy,2,1.3);nucleus(430+d,cy,3,1.3);c.fillText("重水素と三重水素が近づく",430,48)}
+  else{const u=Math.min(1,(phase-.6)/.3);nucleus(430-u*105,cy,4,1.3);particle(430+u*200,cy,9,"#f7e69a");c.fillText("ヘリウム4と中性子が生じる",430,48)}
+ }
+ c.fillStyle="#b4cbe8";c.textAlign="left";c.font="13px sans-serif";c.fillText("● オレンジ：陽子　● 青：中性子　● 黄：放出中性子（模式図）",18,H-20);
+ if(nuclearPlaying)nuclearFrame+=nuclearSpeed;
+ nuclearRaf=requestAnimationFrame(frame);
+ }frame();
+}
+
+function draw(){nuclearStop();acceleratorStop();stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();$("q").placeholder=tab==="home"?"学びたいテーマを検索": "名前・記号・キーワードで検索";if(tab=="lab")labInit();if(tab==="accelerator")acceleratorInit();if(tab==="nuclear")nuclearInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
 document.addEventListener("click",ev=>{
- const t=ev.target.closest("[data-accelerator-mode],[data-accelerator-play],[data-accelerator-reset],[data-radiation-type],[data-radiation-material],[data-incident-cat],[data-incident-open],[data-incident-back],[data-researcher-category],[data-lab-category],[data-timeline-era],[data-timeline-category],[data-timeline-order],[data-term-back],[data-note-add],[data-note-save],[data-note-delete],[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
+ const t=ev.target.closest("[data-nuclear-mode],[data-nuclear-play],[data-nuclear-reset],[data-accelerator-mode],[data-accelerator-play],[data-accelerator-reset],[data-radiation-type],[data-radiation-material],[data-incident-cat],[data-incident-open],[data-incident-back],[data-researcher-category],[data-lab-category],[data-timeline-era],[data-timeline-category],[data-timeline-order],[data-term-back],[data-note-add],[data-note-save],[data-note-delete],[data-term-cat],[data-term-open],[data-go-kind],[data-focus-clear],[data-layout],[data-atom-toggle],[data-atom-reset],[data-t],[data-z],[data-c],[data-x],[data-e],[data-r],[data-h],[data-i],[data-p],[data-fav],[data-answer],[data-next],[data-restart]");
  if(!t)return;
+ if(t.dataset.nuclearMode!==undefined){nuclearMode=t.dataset.nuclearMode;nuclearFrame=0;nuclearPlaying=true;draw();return}
+ if(t.dataset.nuclearPlay!==undefined){nuclearPlaying=!nuclearPlaying;t.textContent=nuclearPlaying?"一時停止":"再生";return}
+ if(t.dataset.nuclearReset!==undefined){nuclearFrame=0;nuclearPlaying=true;draw();return}
  if(t.dataset.acceleratorMode!==undefined){acceleratorMode=t.dataset.acceleratorMode;acceleratorFrame=0;acceleratorRunning=true;draw();return}
  if(t.dataset.acceleratorPlay!==undefined){acceleratorRunning=!acceleratorRunning;t.textContent=acceleratorRunning?"一時停止":"再生";return}
  if(t.dataset.acceleratorReset!==undefined){acceleratorFrame=0;acceleratorRunning=true;draw();return}
