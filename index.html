@@ -1230,7 +1230,7 @@ function spaceInit(){
  }frame();
 }
 
-function draw(){studioStop();spaceStop();astroStop();nuclearStop();acceleratorStop();stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();$("q").placeholder=tab==="home"?"学びたいテーマを検索": "名前・記号・キーワードで検索";if(tab=="lab")labInit();if(tab==="accelerator")acceleratorInit();if(tab==="nuclear")nuclearInit();if(tab==="astro")astroInit();if(tab==="spacelab")spaceInit();if(tab==="spaceatlas")planetGlobeInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart()}
+function draw(){studioStop();spaceStop();astroStop();nuclearStop();acceleratorStop();stopLab();cancelAnimationFrame(atomRaf);tabs();$("content").innerHTML=view();$("q").placeholder=tab==="home"?"学びたいテーマを検索": "名前・記号・キーワードで検索";if(tab=="lab")labInit();if(tab==="accelerator")acceleratorInit();if(tab==="nuclear")nuclearInit();if(tab==="astro")astroInit();if(tab==="spacelab")spaceInit();if(tab==="spaceatlas")planetGlobeInit();if(tab=="hl")hlUpdate();if(tab=="pt")atomStart();studioInit()}
 
 document.addEventListener("click",e=>{
  const t=e.target.closest("[data-solar-select],[data-solar-play],[data-solar-reset],[data-molecule-select],[data-molecule-play],[data-molecule-reset],[data-spectrum-select],[data-spectrum-mode],[data-exo-filter],[data-studio-quiz-cat],[data-studio-answer],[data-studio-next],[data-studio-restart],[data-nucleo-select],[data-nucleo-play],[data-nucleo-reset]");
